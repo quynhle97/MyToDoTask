@@ -40,6 +40,7 @@ class MainActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelected
     lateinit var taskAdapter: TaskAdapter
 
     lateinit var tags: ArrayList<Tag>
+    lateinit var relationships: ArrayList<Relationship>
 
     private lateinit var username: String
 
@@ -161,11 +162,6 @@ class MainActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelected
         if (requestCode == CODE_ADD_NEW_TASK && resultCode == Activity.RESULT_OK) {
             val newTask = data?.extras?.getParcelable(NEW_TASK_KEY) as Task
             taskAdapter.appendTask(newTask)
-//            val id = repositoryHelper.insertTask(newTask) // Local Database
-//            newTask.id = id.toInt()
-//            taskAdapter.appendTask(newTask)
-//            if (username != USERNAME_DEFAULT)
-//                repositoryHelper.writeTaskFirebaseDatabase(newTask, username) // Firebase Database
         }
         if (requestCode == CODE_EDIT_TASK && resultCode == Activity.RESULT_OK) {
             val codeEditTask = data?.extras?.getInt(EDIT_TASK_POSITION_KEY) as Int
@@ -191,6 +187,7 @@ class MainActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelected
     private fun initial() {
         tasks = repositoryHelper.getAllTasks() as ArrayList<Task>
         tags = repositoryHelper.getAllTags() as ArrayList<Tag>
+        relationships = repositoryHelper.getAllRelationships() as ArrayList<Relationship>
         setupRecyclerView()
     }
 
@@ -245,30 +242,56 @@ class MainActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelected
     }
 
     private fun showDialogListOfTags() {
-        val listTags = repositoryHelper.getAllTags()
-        val listTagsString = ArrayList<String>()
-        for (i in listTags) listTagsString.add(i.tag)
-        val tagsDialog = convertToArrayString(listTagsString)
-        val checkedTagsDialog = BooleanArray(tagsDialog.size)
-        for (i in 0 until checkedTagsDialog.size) checkedTagsDialog[i] = false
+        this.tags = ArrayList()
+        tags = repositoryHelper.getAllTags() as ArrayList<Tag>
+        this.relationships = ArrayList()
+        relationships = repositoryHelper.getAllRelationships() as ArrayList<Relationship>
+
+        // Save flag as tag can't be deleted: True - Can't be deleted and False - Can be deleted
+        var arrTaged = ArrayList<Boolean>(tags.size)
+        for (i in 0 until tags.size) {
+            arrTaged.add(false)
+        }
+        for (i in 0 until arrTaged.size) {
+            for (j in 0 until relationships.size)
+                if (getTagName(relationships[j].tag) == tags[i].tag) {
+                    arrTaged[i] = true
+                }
+        }
+
+        val array = ArrayList<String>()
+        for (i in tags) {
+            array.add(i.tag)
+        }
+        val listTags = arrayOfNulls<String>(array.size)
+        array.toArray(listTags)
+        var checkedTags = BooleanArray(tags.size)
+
+        for (i in 0 until tags.size) {
+            checkedTags[i] = false
+        }
 
         val builder = AlertDialog.Builder(this)
-        builder.setMultiChoiceItems(tagsDialog, checkedTagsDialog) { dialog, which, isChecked ->
-            checkedTagsDialog[which] = isChecked
+        builder.setMultiChoiceItems(listTags, checkedTags) { dialog, which, isChecked ->
+            Toast.makeText(applicationContext, "$which - $isChecked", Toast.LENGTH_SHORT).show()
+            checkedTags[which] = isChecked
         }
 
         builder.setCancelable(false)
         builder.setTitle("List of Tags")
 
         builder.setPositiveButton("Delete") { dialog, which ->
-            for (i in 0 until tagsDialog.size) {
-                if (checkedTagsDialog[i]) {
-                    Toast.makeText(applicationContext, "Tag ${tags[i].tag} is deleted", Toast.LENGTH_SHORT).show()
-                    repositoryHelper.deleteTag(tags[i])                                 // Delete tags local database
-                    repositoryHelper.removeTagFirebaseDatabase(tags[i], username)       // Delete tags firebase database
-                    tags.removeAt(i)                                                    // Delete tags view
+            // delete tag from Database Tag
+            for (i in 0 until tags.size) {
+                if (checkedTags[i] && !arrTaged[i]) {
+                    // delete database tags
+                    repositoryHelper.deleteTag(tags[i])                                 // Local Database
+                    if (username != USERNAME_DEFAULT)
+                        repositoryHelper.removeTagFirebaseDatabase(tags[i], username)   // Firebase Database
+                    tags.removeAt(i)                                                    // Tags Adapter for View
                 }
             }
+            Toast.makeText(applicationContext, "Tag attached won't be deleted", Toast.LENGTH_SHORT).show()
         }
 
         builder.setNegativeButton("Cancel") { dialog, which ->
@@ -305,5 +328,9 @@ class MainActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelected
         tasks[position].checked = state
         repositoryHelper.updateTask(tasks[position])
         repositoryHelper.writeTaskFirebaseDatabase(tasks[position], username)
+    }
+
+    private fun getTagName(idInt: Int): String {
+        return repositoryHelper.findByIdTag(idInt).tag
     }
 }
