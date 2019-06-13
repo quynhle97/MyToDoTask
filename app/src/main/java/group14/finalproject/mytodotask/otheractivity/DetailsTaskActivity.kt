@@ -35,9 +35,16 @@ class DetailsTaskActivity : AppCompatActivity() {
 
         return when (item.itemId) {
             R.id.action_save-> {
-                val task = handleSaveEditTask()
-                val intent = Intent(this, MainActivity::class.java)
-                intent.putExtra(EDIT_TASK_KEY, task)
+                val editTask = Task()
+
+                editTask.title = edt_title.text.toString()
+                editTask.description = edt_description_note.text.toString()
+                editTask.checked = cb_completed.isChecked
+                editTask.priority = indexRadioButton
+                editTask.categorize = tv_uncategorized.text.toString()
+
+                val intent = Intent()
+                intent.putExtra(EDIT_TASK_KEY, editTask)
                 setResult(Activity.RESULT_OK, intent)
                 finish()
                 return true
@@ -47,18 +54,6 @@ class DetailsTaskActivity : AppCompatActivity() {
             }
             else -> super.onOptionsItemSelected(item)
         }
-    }
-
-    private fun handleSaveEditTask(): Task {
-        val editTask = Task()
-
-        editTask.title = edt_title.text.toString()
-        editTask.description = edt_description_note.text.toString()
-        editTask.checked = cb_completed.isChecked
-        editTask.priority = indexRadioButton
-        editTask.categorize = tv_uncategorized.text.toString()
-
-        return editTask
     }
 
     private fun setInitialView() {
