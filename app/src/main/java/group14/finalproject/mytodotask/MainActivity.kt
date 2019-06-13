@@ -151,7 +151,8 @@ class MainActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelected
             val id = repositoryHelper.insertTask(newTask)
             newTask.id = id.toInt()
             taskAdapter.appendData(newTask)
-            repositoryHelper.writeTaskFirebaseDatabase(newTask, email)
+            Toast.makeText(this, "Firebase", Toast.LENGTH_LONG).show()
+            repositoryHelper.writeTaskFirebaseDatabase(newTask)
         }
         if (requestCode == CODE_EDIT_TASK && resultCode == Activity.RESULT_OK) {
 
