@@ -1,26 +1,27 @@
 package group14.finalproject.mytodotask.repo
 
 import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import group14.finalproject.mytodotask.*
 import group14.finalproject.mytodotask.room.*
 import javax.inject.Inject
 
-class RepositoryManager @Inject constructor (taskDao: TaskDAO, tagDAO: TagDAO, relationshipDAO: RelationshipDAO, firebaseReference: DatabaseReference) : RepositoryHelper {
+class RepositoryManager @Inject constructor (taskDao: TaskDAO, tagDAO: TagDAO, relationshipDAO: RelationshipDAO, firebaseDatabase: FirebaseDatabase) : RepositoryHelper {
     private val taskDao: TaskDAO = taskDao
     private val tagDao: TagDAO = tagDAO
     private val relationshipDao: RelationshipDAO = relationshipDAO
-    private val firebaseReference: DatabaseReference = firebaseReference
+    private val firebaseReference: DatabaseReference = firebaseDatabase.reference
 
     override fun writeTaskFirebaseDatabase(task: Task, username: String) {
-        firebaseReference.child("/$username/TASK").child(task.id.toString()).setValue(task)
+        firebaseReference.child(TASK_FIREBASE_DATABASE).child(username).child(task.id.toString()).setValue(task)
     }
 
     override fun writeTagFirebaseDatabase(tag: Tag, username: String) {
-        firebaseReference.child("/$username/TAG").child(tag.id.toString()).setValue(tag)
+        firebaseReference.child(TAG_FIREBASE_DATABASE).child(username).child(tag.id.toString()).setValue(tag)
     }
 
     override fun writeRelationshipFirebaseDatabase(relationship: Relationship, username: String) {
-        firebaseReference.child("/$username/RELATIONSHIP").child(relationship.id.toString()).setValue(relationship)
+        firebaseReference.child(RELATIONSHIP_FIREBASE_DATABASE).child(username).child(relationship.id.toString()).setValue(relationship)
     }
 
     override fun getAllTasks(): List<Task> {

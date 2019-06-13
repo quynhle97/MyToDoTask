@@ -61,12 +61,6 @@ class TaskModule (mApplication: Application) {
 
     @Singleton
     @Provides
-    fun getReferenceFirebaseDatabase(): DatabaseReference {
-        return firebaseDatabase.reference
-    }
-
-    @Singleton
-    @Provides
     fun getTaskDao(): TaskDAO {
         return taskDatabase.taskDAO()
     }
@@ -85,7 +79,7 @@ class TaskModule (mApplication: Application) {
 
     @Singleton
     @Provides
-    fun repositoryHelper(taskDao: TaskDAO, tagDao: TagDAO, relationshipDao: RelationshipDAO, firebaseReference: DatabaseReference): RepositoryHelper {
-        return RepositoryManager(taskDao, tagDao, relationshipDao, firebaseReference)
+    fun repositoryHelper(taskDao: TaskDAO, tagDao: TagDAO, relationshipDao: RelationshipDAO, firebaseDatabase: FirebaseDatabase): RepositoryHelper {
+        return RepositoryManager(taskDao, tagDao, relationshipDao, firebaseDatabase)
     }
 }
