@@ -42,7 +42,7 @@ class MainActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelected
         setContentView(R.layout.activity_main)
         setupInitialView()
 
-        username = SharedPreferencesHelper.readString(USERNAME_KEY).substringBeforeLast("@")
+        username = SharedPreferencesHelper.readString(USERNAME_KEY)
 
         // It assigns references in our activities, services, or fragments to have access to singletons we earlier defined
         (application as MyApplication).getAppComponent().inject(this)
