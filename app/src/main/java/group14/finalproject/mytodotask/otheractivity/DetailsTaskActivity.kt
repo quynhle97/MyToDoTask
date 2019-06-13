@@ -12,8 +12,9 @@ import group14.finalproject.mytodotask.room.*
 import kotlinx.android.synthetic.main.activity_details_task.*
 
 class DetailsTaskActivity : AppCompatActivity() {
-    var indexRadioButton = -1
-    var indexItemClicked = -1
+    var indexRadioButton: Int = -1
+    var indexItemClicked: Int = -1
+    var idItemClicked: Int = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,6 +39,7 @@ class DetailsTaskActivity : AppCompatActivity() {
             R.id.action_save-> {
                 val editTask = Task()
 
+                editTask.id = idItemClicked
                 editTask.title = edt_title.text.toString()
                 editTask.description = edt_description_note.text.toString()
                 editTask.checked = cb_completed.isChecked
@@ -46,7 +48,7 @@ class DetailsTaskActivity : AppCompatActivity() {
 
                 val intent = Intent()
                 intent.putExtra(EDIT_TASK_KEY, editTask)
-                intent.putExtra(EDIT_TASK_POSITION_KET, EDIT_TASK_POSITION_KET)
+                intent.putExtra(EDIT_TASK_POSITION_KET, indexItemClicked)
                 setResult(Activity.RESULT_OK, intent)
                 finish()
                 return true
@@ -61,7 +63,9 @@ class DetailsTaskActivity : AppCompatActivity() {
     private fun setInitialView() {
         val data = intent.extras
         val editTask = data.getParcelable(EDIT_TASK) as Task
-        indexItemClicked = data.getInt(EDIT_TASK_POSITION_KET)
+        indexItemClicked = data.getInt(EDIT_TASK_POSITION)
+
+        idItemClicked = editTask.id!!
 
         edt_title.setText(editTask.title)
         edt_description_note.setText(editTask.description)
