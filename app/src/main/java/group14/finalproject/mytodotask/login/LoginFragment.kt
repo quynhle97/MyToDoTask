@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
-import group14.finalproject.mytodotask.EMAIL_DEFAULT
+import group14.finalproject.mytodotask.USERNAME_DEFAULT
 import group14.finalproject.mytodotask.MainActivity
 import group14.finalproject.mytodotask.R
 import group14.finalproject.mytodotask.USERNAME_KEY
@@ -37,7 +37,7 @@ class LoginFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         tvSkip.setOnClickListener {
-            SharedPreferencesHelper.saveString(USERNAME_KEY, EMAIL_DEFAULT)
+            SharedPreferencesHelper.saveString(USERNAME_KEY, USERNAME_DEFAULT)
             startActivity(Intent(activity, MainActivity::class.java))
         }
 

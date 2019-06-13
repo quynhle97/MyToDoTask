@@ -6,6 +6,8 @@ import android.support.v4.app.Fragment
 import group14.finalproject.mytodotask.login.ForgetPasswordFragment
 import group14.finalproject.mytodotask.login.LoginFragment
 import group14.finalproject.mytodotask.login.RegisterFragment
+import group14.finalproject.mytodotask.sharedpreferences.SharedPreferencesHelper
+import android.content.Intent
 
 class FirstActivity : AppCompatActivity(), LoginFragment.Listener,
     RegisterFragment.Listener, ForgetPasswordFragment.Listener {
@@ -15,7 +17,11 @@ class FirstActivity : AppCompatActivity(), LoginFragment.Listener,
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_first)
 
-        addFirstFragment()
+        if (SharedPreferencesHelper.readString(USERNAME_KEY) == "NO_CONTAIN_KEY") {
+            addFirstFragment()
+        } else {
+            startActivity(Intent(this, MainActivity::class.java))
+        }
     }
 
     private fun addFirstFragment() {

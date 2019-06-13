@@ -3,6 +3,7 @@ package group14.finalproject.mytodotask.sharedpreferences
 import android.content.Context
 import android.content.SharedPreferences
 import group14.finalproject.mytodotask.PREFERENCES_NAME
+import group14.finalproject.mytodotask.USERNAME_KEY
 
 object SharedPreferencesHelper {
     private const val MODE = Context.MODE_PRIVATE
@@ -44,5 +45,8 @@ object SharedPreferencesHelper {
         else defaultValue
     }
 
+    fun clearUser() {
+        preferences.edit().remove(USERNAME_KEY).apply()
+    }
 
 }

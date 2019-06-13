@@ -19,6 +19,7 @@ import group14.finalproject.mytodotask.recyclerview.TaskAdapter
 import group14.finalproject.mytodotask.recyclerview.TaskItemClickListener
 import group14.finalproject.mytodotask.repo.RepositoryHelper
 import group14.finalproject.mytodotask.room.*
+import group14.finalproject.mytodotask.sharedpreferences.SharedPreferencesHelper
 import kotlinx.android.synthetic.main.content_main.*
 import javax.inject.Inject
 
@@ -128,6 +129,8 @@ class MainActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelected
                 startActivity(intent)
             }
             R.id.nav_sign_out -> {
+                SharedPreferencesHelper.clearUser()
+                repositoryHelper.deleteAll()
             }
         }
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)

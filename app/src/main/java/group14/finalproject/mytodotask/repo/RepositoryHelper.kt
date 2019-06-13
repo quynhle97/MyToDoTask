@@ -20,6 +20,7 @@ interface RepositoryHelper {
     fun deleteAllTasks()
     fun deleteAllTags()
     fun deleteAllRelationship()
+    fun deleteAll()
 
     fun updateTask(task: Task)
     fun updateTag(tag: Tag)

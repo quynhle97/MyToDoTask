@@ -5,12 +5,13 @@ import group14.finalproject.mytodotask.*
 import group14.finalproject.mytodotask.room.*
 import javax.inject.Inject
 
-class RepositoryManager @Inject constructor (taskDao: TaskDAO, tagDAO: TagDAO, relationshipDAO: RelationshipDAO, firebaseReference: DatabaseReference) : RepositoryHelper {
+class RepositoryManager @Inject constructor (
+    private val taskDao: TaskDAO, tagDAO: TagDAO, relationshipDAO: RelationshipDAO,
+    private val firebaseReference: DatabaseReference
+) : RepositoryHelper {
 
-    private val taskDao: TaskDAO = taskDao
     private val tagDao: TagDAO = tagDAO
     private val relationshipDao: RelationshipDAO = relationshipDAO
-    private val firebaseReference: DatabaseReference = firebaseReference
 
     override fun writeTaskFirebaseDatabase(task: Task) {
         firebaseReference.child(TASK_FIREBASE_DATABASE).child(task.id.toString()).setValue(task)
@@ -58,6 +59,12 @@ class RepositoryManager @Inject constructor (taskDao: TaskDAO, tagDAO: TagDAO, r
 
     override fun deleteAllRelationship() {
         relationshipDao.deleteAllRelations()
+    }
+
+    override fun deleteAll() {
+        deleteAllRelationship()
+        deleteAllTags()
+        deleteAllTasks()
     }
 
     override fun updateTask(task: Task) {
