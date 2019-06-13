@@ -11,8 +11,8 @@ class RepositoryManager @Inject constructor (taskDao: TaskDAO, tagDAO: TagDAO, r
     private val relationshipDao: RelationshipDAO = relationshipDAO
     private val firebaseReference: DatabaseReference = firebaseReference
 
-    override fun writeTaskFirebaseDatabase(task: Task) {
-        firebaseReference.child(TASK_FIREBASE_DATABASE).child(task.id.toString()).setValue(task)
+    override fun writeTaskFirebaseDatabase(task: Task, username: String) {
+        firebaseReference.child("${username}_TASK").child(task.id.toString()).setValue(task)
     }
 
     override fun writeTagFirebaseDatabase(tag: Tag) {
