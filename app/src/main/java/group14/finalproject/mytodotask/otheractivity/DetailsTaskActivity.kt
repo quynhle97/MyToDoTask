@@ -2,12 +2,16 @@ package group14.finalproject.mytodotask.otheractivity
 
 import android.app.Activity
 import android.content.Intent
+import android.app.TimePickerDialog
+import android.icu.util.Calendar
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
+import android.text.format.DateFormat
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.RadioButton
+import android.widget.TimePicker
 import group14.finalproject.mytodotask.*
 import group14.finalproject.mytodotask.room.*
 import kotlinx.android.synthetic.main.activity_details_task.*
@@ -72,6 +76,21 @@ class DetailsTaskActivity : AppCompatActivity() {
             1 -> btnNormal.isChecked = true
             2 -> btnHigh.isChecked = true
         }
+
+        tv_add_reminder.setOnClickListener {
+            // Use the current time as the default values for the picker
+            val c = Calendar.getInstance()
+            val hour = c.get(Calendar.HOUR_OF_DAY)
+            val minute = c.get(Calendar.MINUTE)
+
+            // Create a new instance of TimePickerDialog and return it
+            val timePickerDialog =  TimePickerDialog(this, TimePickerDialog.OnTimeSetListener { timePicker: TimePicker, hourOfDay: Int, minute: Int ->
+                tv_add_reminder.setText("Hour: $hourOfDay, minute: $minute")
+            }, hour, minute, DateFormat.is24HourFormat(this))
+            timePickerDialog.setTitle("Select Time")
+            timePickerDialog.show()
+        }
+
     }
 
     private fun handleSaveTask() {
