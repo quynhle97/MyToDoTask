@@ -1,5 +1,7 @@
 package group14.finalproject.mytodotask.otheractivity
 
+import android.app.Activity
+import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
@@ -34,7 +36,10 @@ class DetailsTaskActivity : AppCompatActivity() {
         return when (item.itemId) {
             R.id.action_save-> {
                 val task = handleSaveEditTask()
-
+                val intent = Intent(this, MainActivity::class.java)
+                intent.putExtra(EDIT_TASK_KEY, task)
+                setResult(Activity.RESULT_OK, intent)
+                finish()
                 return true
             }
             R.id.action_delete-> {

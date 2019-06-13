@@ -32,6 +32,7 @@ class MainActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelected
     lateinit var taskAdapter: TaskAdapter
 
     private lateinit var username: String
+    private var itemClickPosition: Int = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,6 +71,7 @@ class MainActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelected
         override fun onItemClicked(position: Int) {
             val intent = Intent(this@MainActivity, DetailsTaskActivity::class.java)
             intent.putExtra(CODE_EDIT_TASK_POSITION, tasks[position])
+            itemClickPosition = position
             startActivityForResult(intent, CODE_EDIT_TASK)
         }
 
@@ -148,14 +150,18 @@ class MainActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelected
 
         if (requestCode == CODE_ADD_NEW_TASK && resultCode == Activity.RESULT_OK) {
             val newTask = data?.extras?.getParcelable(NEW_TASK_KEY) as Task
-            val id = repositoryHelper.insertTask(newTask)
+            val id = repositoryHelper.insertTask(newTask) // Local Database
             newTask.id = id.toInt()
-            taskAdapter.appendData(newTask)
-            Toast.makeText(this, "Firebase", Toast.LENGTH_LONG).show()
-            repositoryHelper.writeTaskFirebaseDatabase(newTask, username)
+            taskAdapter.appendTask(newTask)
+            if (username != USERNAME_DEFAULT)
+                repositoryHelper.writeTaskFirebaseDatabase(newTask, username) // Firebase Database
         }
         if (requestCode == CODE_EDIT_TASK && resultCode == Activity.RESULT_OK) {
-
+            val editTask = data?.extras?.getParcelable(EDIT_TASK_KEY) as Task
+            taskAdapter.setTask(editTask, itemClickPosition)
+            repositoryHelper.updateTask(editTask) // Local Database
+            if (username != USERNAME_DEFAULT)
+                repositoryHelper.writeTaskFirebaseDatabase(editTask, username) // Firebase Database
         }
     }
 
