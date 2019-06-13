@@ -3,9 +3,9 @@ package group14.finalproject.mytodotask
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import group14.finalproject.mytodotask.login.ForgetPasswordFragment
-import group14.finalproject.mytodotask.login.LoginFragment
-import group14.finalproject.mytodotask.login.RegisterFragment
+import group14.finalproject.mytodotask.fragments.ForgetPasswordFragment
+import group14.finalproject.mytodotask.fragments.LoginFragment
+import group14.finalproject.mytodotask.fragments.RegisterFragment
 import group14.finalproject.mytodotask.sharedpreferences.SharedPreferencesHelper
 import android.content.Intent
 

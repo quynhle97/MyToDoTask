@@ -1,4 +1,4 @@
-package group14.finalproject.mytodotask.login
+package group14.finalproject.mytodotask.fragments
 
 import android.os.Bundle
 import android.view.View
