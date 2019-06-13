@@ -53,11 +53,16 @@ class TaskAdapter(var items: ArrayList<Task>, val context: Context) : RecyclerVi
         this.mListener = listener
     }
 
-    fun setData(items: ArrayList<Task>) {
+    fun setArrayListTask(items: ArrayList<Task>) {
         this.items = items
     }
 
-    fun appendData(newTaskAdded: Task) {
+    fun setTask(item: Task, position: Int) {
+            this.items[position] = item
+        notifyItemChanged(position)
+    }
+
+    fun appendTask(newTaskAdded: Task) {
         this.items.add(newTaskAdded)
         notifyItemInserted(items.size - 1)
     }

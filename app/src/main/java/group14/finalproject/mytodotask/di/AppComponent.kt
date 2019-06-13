@@ -16,7 +16,6 @@ interface AppComponent {
     fun tagDatabase(): TagDatabase
     fun relationshipDatabase(): RelationshipDatabase
 
-    fun firebaseReference(): DatabaseReference
     fun taskDao(): TaskDAO
     fun tagDao(): TagDAO
     fun relationshipDao(): RelationshipDAO

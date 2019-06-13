@@ -1,5 +1,7 @@
 package group14.finalproject.mytodotask.otheractivity
 
+import android.app.Activity
+import android.content.Intent
 import android.app.TimePickerDialog
 import android.icu.util.Calendar
 import android.support.v7.app.AppCompatActivity
@@ -14,7 +16,9 @@ import group14.finalproject.mytodotask.room.*
 import kotlinx.android.synthetic.main.activity_details_task.*
 
 class DetailsTaskActivity : AppCompatActivity() {
-    var indexRadioButton = -1
+    var indexRadioButton: Int = 1
+    var indexItemClicked: Int = -1
+    var idItemClicked: Int = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,8 +41,20 @@ class DetailsTaskActivity : AppCompatActivity() {
 
         return when (item.itemId) {
             R.id.action_save-> {
-                val task = handleSaveEditTask()
+                val editTask = Task()
 
+                editTask.id = idItemClicked
+                editTask.title = edt_title.text.toString()
+                editTask.description = edt_description_note.text.toString()
+                editTask.checked = cb_completed.isChecked
+                editTask.priority = indexRadioButton
+                editTask.categorize = tv_uncategorized.text.toString()
+
+                val intent = Intent()
+                intent.putExtra(EDIT_TASK_KEY, editTask)
+                intent.putExtra(EDIT_TASK_POSITION_KET, indexItemClicked)
+                setResult(Activity.RESULT_OK, intent)
+                finish()
                 return true
             }
             R.id.action_delete-> {
@@ -48,32 +64,25 @@ class DetailsTaskActivity : AppCompatActivity() {
         }
     }
 
-    private fun handleSaveEditTask(): Task {
-        val editTask = Task()
-
-        editTask.title = edt_title.text.toString()
-        editTask.description = edt_description_note.text.toString()
-        editTask.checked = cb_completed.isChecked
-        editTask.priority = indexRadioButton
-        editTask.categorize = tv_uncategorized.text.toString()
-
-        return editTask
-    }
-
     private fun setInitialView() {
         val data = intent.extras
-        val editTask = data.getParcelable(CODE_EDIT_TASK_POSITION) as Task
+        val editTask = data.getParcelable(EDIT_TASK) as Task
+        indexItemClicked = data.getInt(EDIT_TASK_POSITION)
+
+        idItemClicked = editTask.id!!
 
         edt_title.setText(editTask.title)
         edt_description_note.setText(editTask.description)
         cb_completed.isChecked = editTask.checked
+        indexRadioButton = editTask.priority
+
         tv_uncategorized.text = editTask.categorize
 
         val btnLow = radio_priority_choice.findViewById<RadioButton>(R.id.btnLow)
         val btnNormal = radio_priority_choice.findViewById<RadioButton>(R.id.btnNormal)
         val btnHigh = radio_priority_choice.findViewById<RadioButton>(R.id.btnHigh)
 
-        when (editTask.priority) {
+        when (indexRadioButton) {
             0 -> btnLow.isChecked = true
             1 -> btnNormal.isChecked = true
             2 -> btnHigh.isChecked = true

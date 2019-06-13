@@ -29,7 +29,7 @@ class NewTaskActivity : AppCompatActivity() {
     var locationX = .0f
     var locationY = .0f
     var categorize = "Uncategorized"
-    var indexRadioButton = -1
+    var indexRadioButton = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

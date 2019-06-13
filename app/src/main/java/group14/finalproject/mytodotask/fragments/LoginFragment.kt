@@ -66,7 +66,7 @@ class LoginFragment : BaseFragment() {
                 .addOnFailureListener {
                     Toast.makeText(context,"Login Failed: ${it.localizedMessage}", Toast.LENGTH_SHORT).show()
                 }.addOnSuccessListener {
-                    SharedPreferencesHelper.saveString(USERNAME_KEY, it.user.email.toString())
+                    SharedPreferencesHelper.saveString(USERNAME_KEY, it.user.email.toString().substringBeforeLast("@"))
                     Toast.makeText(context,"Login success: ${it.user.email}", Toast.LENGTH_SHORT).show()
                     startActivity(Intent(activity, MainActivity::class.java))
                 }.addOnCanceledListener {
