@@ -160,11 +160,12 @@ class MainActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelected
 
         if (requestCode == CODE_ADD_NEW_TASK && resultCode == Activity.RESULT_OK) {
             val newTask = data?.extras?.getParcelable(NEW_TASK_KEY) as Task
-            val id = repositoryHelper.insertTask(newTask) // Local Database
-            newTask.id = id.toInt()
             taskAdapter.appendTask(newTask)
-            if (username != USERNAME_DEFAULT)
-                repositoryHelper.writeTaskFirebaseDatabase(newTask, username) // Firebase Database
+//            val id = repositoryHelper.insertTask(newTask) // Local Database
+//            newTask.id = id.toInt()
+//            taskAdapter.appendTask(newTask)
+//            if (username != USERNAME_DEFAULT)
+//                repositoryHelper.writeTaskFirebaseDatabase(newTask, username) // Firebase Database
         }
         if (requestCode == CODE_EDIT_TASK && resultCode == Activity.RESULT_OK) {
             val codeEditTask = data?.extras?.getInt(EDIT_TASK_POSITION_KEY) as Int
