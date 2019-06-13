@@ -31,10 +31,14 @@ class MainActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelected
     lateinit var tasks: ArrayList<Task>
     lateinit var taskAdapter: TaskAdapter
 
+    private lateinit var email: String
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setupInitialView()
+
+        email = SharedPreferencesHelper.readString(USERNAME_KEY)
 
         // It assigns references in our activities, services, or fragments to have access to singletons we earlier defined
         (application as MyApplication).getAppComponent().inject(this)
@@ -147,7 +151,7 @@ class MainActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelected
             val id = repositoryHelper.insertTask(newTask)
             newTask.id = id.toInt()
             taskAdapter.appendData(newTask)
-            repositoryHelper.writeTaskFirebaseDatabase(newTask)
+            repositoryHelper.writeTaskFirebaseDatabase(newTask, email)
         }
         if (requestCode == CODE_EDIT_TASK && resultCode == Activity.RESULT_OK) {
 
