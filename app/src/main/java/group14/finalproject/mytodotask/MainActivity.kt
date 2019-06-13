@@ -131,6 +131,7 @@ class MainActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelected
             R.id.nav_sign_out -> {
                 SharedPreferencesHelper.clearUser()
                 repositoryHelper.deleteAll()
+                startActivity(Intent(this@MainActivity, FirstActivity::class.java))
             }
         }
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
