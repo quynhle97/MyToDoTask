@@ -222,7 +222,7 @@
                 android:text="Uncategorized"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:id="@+id/tv_uncategorized" app:layout_constraintStart_toEndOf="@+id/imageView5"
+                android:id="@+id/tv_add_tags" app:layout_constraintStart_toEndOf="@+id/imageView5"
                 android:layout_marginStart="8dp" app:layout_constraintEnd_toEndOf="parent"
                 android:layout_marginEnd="8dp" app:layout_constraintTop_toBottomOf="@+id/line4"
                 app:layout_constraintBottom_toTopOf="@+id/line5" android:textSize="18sp"/>

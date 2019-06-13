@@ -9,7 +9,7 @@ import android.view.MenuItem
 import android.widget.RadioButton
 import group14.finalproject.mytodotask.*
 import group14.finalproject.mytodotask.room.*
-import kotlinx.android.synthetic.main.activity_task.*
+import kotlinx.android.synthetic.main.activity_details_task.*
 import kotlin.collections.ArrayList
 
 class NewTaskActivity : AppCompatActivity() {
@@ -33,7 +33,7 @@ class NewTaskActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_task)
+        setContentView(R.layout.activity_details_task)
 
         radio_priority_choice.setOnCheckedChangeListener { group, checkedId ->
             val radio: RadioButton = findViewById(checkedId)

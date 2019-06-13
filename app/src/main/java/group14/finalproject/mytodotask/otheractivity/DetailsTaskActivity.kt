@@ -65,7 +65,7 @@ class DetailsTaskActivity : AppCompatActivity() {
         cb_completed.isChecked = editTask.checked
         indexRadioButton = editTask.priority
 
-        tv_uncategorized.text = editTask.categorize
+        tv_add_tags.text = editTask.categorize
 
         val btnLow = radio_priority_choice.findViewById<RadioButton>(R.id.btnLow)
         val btnNormal = radio_priority_choice.findViewById<RadioButton>(R.id.btnNormal)
@@ -101,7 +101,7 @@ class DetailsTaskActivity : AppCompatActivity() {
         editTask.description = edt_description_note.text.toString()
         editTask.checked = cb_completed.isChecked
         editTask.priority = indexRadioButton
-        editTask.categorize = tv_uncategorized.text.toString()
+        editTask.categorize = tv_add_tags.text.toString()
 
         val intent = Intent()
         intent.putExtra(EDIT_TASK_KEY, editTask)
