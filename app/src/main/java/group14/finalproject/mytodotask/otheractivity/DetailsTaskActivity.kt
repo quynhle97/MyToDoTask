@@ -13,10 +13,15 @@ import android.view.MenuItem
 import android.widget.RadioButton
 import android.widget.TimePicker
 import group14.finalproject.mytodotask.*
+import group14.finalproject.mytodotask.repo.RepositoryHelper
 import group14.finalproject.mytodotask.room.*
 import kotlinx.android.synthetic.main.activity_details_task.*
+import javax.inject.Inject
 
 class DetailsTaskActivity : AppCompatActivity() {
+    @Inject
+    lateinit var repositoryHelper: RepositoryHelper
+
     var indexRadioButton: Int = 1
     var indexItemClicked: Int = -1
     var idItemClicked: Int = -1
@@ -24,6 +29,8 @@ class DetailsTaskActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_details_task)
+
+        (application as MyApplication).getAppComponent().inject(this)
 
         setInitialView()
 

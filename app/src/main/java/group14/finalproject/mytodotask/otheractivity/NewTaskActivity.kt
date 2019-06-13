@@ -7,33 +7,32 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.RadioButton
+import android.widget.Toast
 import group14.finalproject.mytodotask.*
+import group14.finalproject.mytodotask.repo.RepositoryHelper
 import group14.finalproject.mytodotask.room.*
 import kotlinx.android.synthetic.main.activity_details_task.*
+import javax.inject.Inject
 import kotlin.collections.ArrayList
 
 class NewTaskActivity : AppCompatActivity() {
+    @Inject
+    lateinit var repositoryHelper: RepositoryHelper
+
+    // Initial Variables
+    var title = "Title"
+    var indexRadioButton = 1
+
     var tags: ArrayList<Tag> = ArrayList()
     var tasks: ArrayList<Task> = ArrayList()
     var checkedTags: ArrayList<Boolean> = ArrayList()
     var relationships: ArrayList<Relationship> = ArrayList()
 
-    // Initial Variables
-    var title = "Title"
-    var description = "Description"
-    var date = ""
-    var time = ""
-    var completed = false
-    var priority = 0
-    var reminder = ""
-    var locationX = .0f
-    var locationY = .0f
-    var categorize = "Uncategorized"
-    var indexRadioButton = 1
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_details_task)
+
+        (application as MyApplication).getAppComponent().inject(this)
 
         radio_priority_choice.setOnCheckedChangeListener { group, checkedId ->
             val radio: RadioButton = findViewById(checkedId)

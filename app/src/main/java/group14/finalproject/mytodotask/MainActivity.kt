@@ -112,7 +112,7 @@ class MainActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelected
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_search -> {
-                val intent = Intent(this@MainActivity, MultiPurposeActivity::class.java)
+                val intent = Intent(this@MainActivity, SearchActivity::class.java)
                 startActivity(intent)
                 return true
             }
