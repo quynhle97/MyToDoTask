@@ -14,6 +14,18 @@ class RepositoryManager @Inject constructor (taskDao: TaskDAO, tagDAO: TagDAO, r
     private val relationshipDao: RelationshipDAO = relationshipDAO
     private val firebaseReference: DatabaseReference = firebaseDatabase.reference
 
+    override fun removeAllTasksFirebaseDatabase(username: String) {
+        firebaseReference.child(TASK_FIREBASE_DATABASE).child(username).removeValue()
+    }
+
+    override fun removeAllTagsFirebaseDatabase(username: String) {
+        firebaseReference.child(TAG_FIREBASE_DATABASE).child(username).removeValue()
+    }
+
+    override fun removeAllRelationshipsFirebaseDatabase(username: String) {
+        firebaseReference.child(RELATIONSHIP_FIREBASE_DATABASE).child(username).removeValue()
+    }
+
     override fun removeTaskFirebaseDatabase(task: Task, username: String) {
         firebaseReference.child(TASK_FIREBASE_DATABASE).child(username).child(task.id.toString()).removeValue()
     }

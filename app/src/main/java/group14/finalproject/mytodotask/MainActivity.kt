@@ -53,7 +53,7 @@ class MainActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelected
         // It assigns references in our activities, services, or fragments to have access to singletons we earlier defined
         (application as MyApplication).getAppComponent().inject(this)
 
-        initialTaskAdapter()
+        initial()
     }
 
     private fun setupInitialView() {
@@ -105,8 +105,8 @@ class MainActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelected
     }
 
     override fun onBackPressed() {
-        SharedPreferencesHelper.clearUser()
-        repositoryHelper.deleteAll()
+        signOut()
+
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START)
@@ -138,33 +138,10 @@ class MainActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelected
 
             }
             R.id.nav_new_tag -> {
-                val mDialogView = LayoutInflater.from(this).inflate(R.layout.dialog_add_new_tag, null)
-                val mBuilder = android.app.AlertDialog.Builder(this)
-                    .setView(mDialogView)
-                    .setTitle("Create new tag")
-                val  mAlertDialog = mBuilder.create()
-                mAlertDialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
-                mAlertDialog.show()
-                mAlertDialog.btnCreateTagDialog.setOnClickListener {
-                    mAlertDialog.dismiss()
-                    val tagName = mDialogView.edt_tag_name.text.toString()
-                    val newTag = Tag()
-                    newTag.tag = tagName
-                    // Add Local Database
-                    repositoryHelper.insertTag(newTag)
-                    // Add Firebase Database
-                    if (username != USERNAME_DEFAULT)
-                        repositoryHelper.writeTagFirebaseDatabase(newTag, username)
-                    // Add dialog view
-                    tags.add(newTag)
-                    Toast.makeText(applicationContext,"New tag added: $tagName", Toast.LENGTH_SHORT).show()
-                }
-                mAlertDialog.btnCancelDialog.setOnClickListener{
-                    mAlertDialog.dismiss()
-                }
+                showDialogCreateNewTag()
             }
             R.id.nav_list_tag -> {
-
+                showDialogListOfTags()
             }
             R.id.nav_new_filter -> {
 
@@ -180,8 +157,7 @@ class MainActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelected
                 startActivity(intent)
             }
             R.id.nav_sign_out -> {
-                SharedPreferencesHelper.clearUser()
-                repositoryHelper.deleteAll()
+                signOut()
                 startActivity(Intent(this@MainActivity, FirstActivity::class.java))
             }
         }
@@ -211,8 +187,9 @@ class MainActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelected
         }
     }
 
-    private fun initialTaskAdapter() {
+    private fun initial() {
         tasks = repositoryHelper.getAllTasks() as ArrayList<Task>
+        tags = repositoryHelper.getAllTags() as ArrayList<Tag>
         setupRecyclerView()
     }
 
@@ -221,6 +198,13 @@ class MainActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelected
         taskAdapter = TaskAdapter(tasks, this)
         rcv_list_tasks.adapter = taskAdapter
         taskAdapter.setListener(taskItemClickListener)
+    }
+
+    private fun signOut() {
+        SharedPreferencesHelper.clearUser()
+        repositoryHelper.deleteAll()                                    // Delete Local Database
+        repositoryHelper.removeAllTasksFirebaseDatabase(username)       // Delete Tasks Firebase Database
+        repositoryHelper.removeAllTagsFirebaseDatabase(username)        // Delete Tags Firebase Database
     }
 
     private fun removeTaskFromAdapter(position: Int) {
@@ -233,5 +217,70 @@ class MainActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelected
                 taskAdapter.notifyDataSetChanged()
             }
         }
+    }
+
+    private fun showDialogCreateNewTag() {
+        val mDialogView = LayoutInflater.from(this).inflate(R.layout.dialog_add_new_tag, null)
+        val mBuilder = android.app.AlertDialog.Builder(this)
+            .setView(mDialogView)
+            .setTitle("Create new tag")
+        val  mAlertDialog = mBuilder.create()
+        mAlertDialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
+        mAlertDialog.show()
+        mAlertDialog.btnCreateTagDialog.setOnClickListener {
+            mAlertDialog.dismiss()
+            val tagName = mDialogView.edt_tag_name.text.toString()
+            val newTag = Tag()
+            newTag.tag = tagName
+            repositoryHelper.insertTag(newTag)                                      // Add Local Database
+            if (username != USERNAME_DEFAULT)
+                repositoryHelper.writeTagFirebaseDatabase(newTag, username)         // Add Firebase Database
+            tags.add(newTag)                                                        // Add dialog view
+            Toast.makeText(applicationContext,"New tag added: $tagName", Toast.LENGTH_SHORT).show()
+        }
+        mAlertDialog.btnCancelDialog.setOnClickListener{
+            mAlertDialog.dismiss()
+        }
+    }
+
+    private fun showDialogListOfTags() {
+        val listTags = repositoryHelper.getAllTags()
+        val listTagsString = ArrayList<String>()
+        for (i in listTags) listTagsString.add(i.tag)
+        val tagsDialog = convertToArrayString(listTagsString)
+        val checkedTagsDialog = BooleanArray(tagsDialog.size)
+        for (i in 0 until checkedTagsDialog.size) checkedTagsDialog[i] = false
+
+        val builder = AlertDialog.Builder(this)
+        builder.setMultiChoiceItems(tagsDialog, checkedTagsDialog) { dialog, which, isChecked ->
+            checkedTagsDialog[which] = isChecked
+        }
+
+        builder.setCancelable(false)
+        builder.setTitle("List of Tags")
+
+        builder.setPositiveButton("Delete") { dialog, which ->
+            for (i in 0 until tagsDialog.size) {
+                if (checkedTagsDialog[i]) {
+                    Toast.makeText(applicationContext, "Tag ${tags[i]} is deleted", Toast.LENGTH_SHORT).show()
+                    repositoryHelper.deleteTag(tags[i])                                 // Delete tags local database
+                    repositoryHelper.removeTagFirebaseDatabase(tags[i], username)       // Delete tags firebase database
+                    tags.removeAt(i)                                                    // Delete tags view
+                }
+            }
+        }
+
+        builder.setNegativeButton("Cancel") { dialog, which ->
+
+        }
+
+        val dialog = builder.create()
+        dialog.show()
+    }
+
+    private fun convertToArrayString(arrayList: ArrayList<String>): Array<String?> {
+        val array = arrayOfNulls<String>(arrayList.size)
+        arrayList.toArray(array)
+        return array
     }
 }
