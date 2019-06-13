@@ -78,7 +78,7 @@ class DetailsTaskActivity : AppCompatActivity() {
         val btnNormal = radio_priority_choice.findViewById<RadioButton>(R.id.btnNormal)
         val btnHigh = radio_priority_choice.findViewById<RadioButton>(R.id.btnHigh)
 
-        when (editTask.priority) {
+        when (indexRadioButton) {
             0 -> btnLow.isChecked = true
             1 -> btnNormal.isChecked = true
             2 -> btnHigh.isChecked = true
