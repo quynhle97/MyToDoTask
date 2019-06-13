@@ -262,7 +262,7 @@ class MainActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelected
         builder.setPositiveButton("Delete") { dialog, which ->
             for (i in 0 until tagsDialog.size) {
                 if (checkedTagsDialog[i]) {
-                    Toast.makeText(applicationContext, "Tag ${tags[i]} is deleted", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(applicationContext, "Tag ${tags[i].tag} is deleted", Toast.LENGTH_SHORT).show()
                     repositoryHelper.deleteTag(tags[i])                                 // Delete tags local database
                     repositoryHelper.removeTagFirebaseDatabase(tags[i], username)       // Delete tags firebase database
                     tags.removeAt(i)                                                    // Delete tags view
