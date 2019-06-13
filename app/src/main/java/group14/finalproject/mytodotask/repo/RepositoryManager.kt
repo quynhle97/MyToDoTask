@@ -8,10 +8,23 @@ import group14.finalproject.mytodotask.room.*
 import javax.inject.Inject
 
 class RepositoryManager @Inject constructor (taskDao: TaskDAO, tagDAO: TagDAO, relationshipDAO: RelationshipDAO, firebaseDatabase: FirebaseDatabase) : RepositoryHelper {
+
     private val taskDao: TaskDAO = taskDao
     private val tagDao: TagDAO = tagDAO
     private val relationshipDao: RelationshipDAO = relationshipDAO
     private val firebaseReference: DatabaseReference = firebaseDatabase.reference
+
+    override fun removeTaskFirebaseDatabase(task: Task, username: String) {
+        firebaseReference.child(TASK_FIREBASE_DATABASE).child(username).child(task.id.toString()).removeValue()
+    }
+
+    override fun removeTagFirebaseDatabase(tag: Tag, username: String) {
+        firebaseReference.child(TAG_FIREBASE_DATABASE).child(username).child(tag.id.toString()).removeValue()
+    }
+
+    override fun removeRelationshipFirebaseDatabase(relationship: Relationship, username: String) {
+        firebaseReference.child(RELATIONSHIP_FIREBASE_DATABASE).child(username).child(relationship.id.toString()).removeValue()
+    }
 
     override fun writeTaskFirebaseDatabase(task: Task, username: String) {
         firebaseReference.child(TASK_FIREBASE_DATABASE).child(username).child(task.id.toString()).setValue(task)

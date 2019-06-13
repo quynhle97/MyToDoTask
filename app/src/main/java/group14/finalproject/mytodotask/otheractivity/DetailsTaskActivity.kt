@@ -70,6 +70,8 @@ class DetailsTaskActivity : AppCompatActivity() {
         edt_title.setText(editTask.title)
         edt_description_note.setText(editTask.description)
         cb_completed.isChecked = editTask.checked
+        indexRadioButton = editTask.priority
+
         tv_uncategorized.text = editTask.categorize
 
         val btnLow = radio_priority_choice.findViewById<RadioButton>(R.id.btnLow)

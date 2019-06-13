@@ -84,6 +84,7 @@ class MainActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelected
                 .setMessage("Are you sure to remove task title ${tasks[position].title}?")
                 .setPositiveButton("OK") { _, _ ->
                     repositoryHelper.deleteTask(tasks[position]) // Local database
+                    repositoryHelper.removeTaskFirebaseDatabase(tasks[position], username)
                     removeTaskFromAdapter(position)
                 }
                 .setNegativeButton(

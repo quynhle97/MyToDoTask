@@ -5,8 +5,11 @@ import group14.finalproject.mytodotask.room.*
 interface RepositoryHelper {
     // Firebase Database Reference
     fun writeTaskFirebaseDatabase(task: Task, username: String)
+    fun removeTaskFirebaseDatabase(task: Task, username: String)
     fun writeTagFirebaseDatabase(tag: Tag, username: String)
+    fun removeTagFirebaseDatabase(tag: Tag, username: String)
     fun writeRelationshipFirebaseDatabase(relationship: Relationship, username: String)
+    fun removeRelationshipFirebaseDatabase(relationship: Relationship, username: String)
 
     // Get/Add/Update/Delete
     fun getAllTasks(): List<Task>
