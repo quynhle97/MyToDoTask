@@ -12,7 +12,7 @@ import group14.finalproject.mytodotask.room.*
 import kotlinx.android.synthetic.main.activity_details_task.*
 
 class DetailsTaskActivity : AppCompatActivity() {
-    var indexRadioButton: Int = -1
+    var indexRadioButton: Int = 1
     var indexItemClicked: Int = -1
     var idItemClicked: Int = -1
 
