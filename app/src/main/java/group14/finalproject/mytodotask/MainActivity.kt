@@ -89,6 +89,7 @@ class MainActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelected
         }
 
         override fun onCheckBoxClicked(position: Int, state: Boolean) {
+            handleOnCheckBoxClicked(position, state)
         }
     }
 
@@ -297,5 +298,11 @@ class MainActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelected
             ) { dialog, _ -> dialog?.dismiss() }
         val myDialog = builder.create()
         myDialog.show()
+    }
+
+    private fun handleOnCheckBoxClicked(position: Int, state: Boolean) {
+        tasks[position].checked = state
+        repositoryHelper.updateTask(tasks[position])
+        repositoryHelper.writeTaskFirebaseDatabase(tasks[position], username)
     }
 }
