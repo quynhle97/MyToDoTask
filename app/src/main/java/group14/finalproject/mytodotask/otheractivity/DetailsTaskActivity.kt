@@ -13,6 +13,7 @@ import kotlinx.android.synthetic.main.activity_details_task.*
 
 class DetailsTaskActivity : AppCompatActivity() {
     var indexRadioButton = -1
+    var indexItemClicked = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,6 +46,7 @@ class DetailsTaskActivity : AppCompatActivity() {
 
                 val intent = Intent()
                 intent.putExtra(EDIT_TASK_KEY, editTask)
+                intent.putExtra(EDIT_TASK_POSITION_KET, EDIT_TASK_POSITION_KET)
                 setResult(Activity.RESULT_OK, intent)
                 finish()
                 return true
@@ -58,7 +60,8 @@ class DetailsTaskActivity : AppCompatActivity() {
 
     private fun setInitialView() {
         val data = intent.extras
-        val editTask = data.getParcelable(CODE_EDIT_TASK_POSITION) as Task
+        val editTask = data.getParcelable(EDIT_TASK) as Task
+        indexItemClicked = data.getInt(EDIT_TASK_POSITION_KET)
 
         edt_title.setText(editTask.title)
         edt_description_note.setText(editTask.description)

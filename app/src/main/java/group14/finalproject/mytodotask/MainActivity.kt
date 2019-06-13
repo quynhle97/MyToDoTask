@@ -9,6 +9,7 @@ import android.support.v7.app.ActionBarDrawerToggle
 import android.view.MenuItem
 import android.support.v4.widget.DrawerLayout
 import android.support.design.widget.NavigationView
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.Toolbar
@@ -21,7 +22,10 @@ import group14.finalproject.mytodotask.repo.RepositoryHelper
 import group14.finalproject.mytodotask.room.*
 import group14.finalproject.mytodotask.sharedpreferences.SharedPreferencesHelper
 import kotlinx.android.synthetic.main.content_main.*
+import java.util.*
 import javax.inject.Inject
+import kotlin.collections.ArrayList
+import kotlin.concurrent.schedule
 
 class MainActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -32,7 +36,6 @@ class MainActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelected
     lateinit var taskAdapter: TaskAdapter
 
     private lateinit var username: String
-    private var itemClickPosition: Int = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,13 +73,24 @@ class MainActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelected
     private val taskItemClickListener = object : TaskItemClickListener {
         override fun onItemClicked(position: Int) {
             val intent = Intent(this@MainActivity, DetailsTaskActivity::class.java)
-            intent.putExtra(CODE_EDIT_TASK_POSITION, tasks[position])
-            itemClickPosition = position
+            intent.putExtra(EDIT_TASK, tasks[position])
+            intent.putExtra(EDIT_TASK_POSITION, position)
             startActivityForResult(intent, CODE_EDIT_TASK)
         }
 
         override fun onItemLongClicked(position: Int) {
-            // delete
+            val builder = AlertDialog.Builder(this@MainActivity)
+            builder.setTitle("Delete Confirmation")
+                .setMessage("Are you sure to remove task title ${tasks[position].title}?")
+                .setPositiveButton("OK") { _, _ ->
+                    repositoryHelper.deleteTask(tasks[position]) // Local database
+                    removeTaskFromAdapter(position)
+                }
+                .setNegativeButton(
+                    "Cancel"
+                ) { dialog, _ -> dialog?.dismiss() }
+            val myDialog = builder.create()
+            myDialog.show()
         }
 
         override fun onCheckBoxClicked(position: Int, state: Boolean) {
@@ -158,6 +172,7 @@ class MainActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelected
         }
         if (requestCode == CODE_EDIT_TASK && resultCode == Activity.RESULT_OK) {
             val editTask = data?.extras?.getParcelable(EDIT_TASK_KEY) as Task
+            val itemClickPosition = data?.extras?.getInt(EDIT_TASK_POSITION_KET) as Int
             taskAdapter.setTask(editTask, itemClickPosition)
             repositoryHelper.updateTask(editTask) // Local Database
             if (username != USERNAME_DEFAULT)
@@ -175,5 +190,17 @@ class MainActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelected
         taskAdapter = TaskAdapter(tasks, this)
         rcv_list_tasks.adapter = taskAdapter
         taskAdapter.setListener(taskItemClickListener)
+    }
+
+    private fun removeTaskFromAdapter(position: Int) {
+        tasks.removeAt(position)
+
+        taskAdapter.notifyItemRemoved(position)
+        Timer(false).schedule(500) {
+            runOnUiThread {
+                taskAdapter.setArrayListTask(tasks)
+                taskAdapter.notifyDataSetChanged()
+            }
+        }
     }
 }
