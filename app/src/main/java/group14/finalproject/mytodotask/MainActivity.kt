@@ -85,19 +85,7 @@ class MainActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelected
         }
 
         override fun onItemLongClicked(position: Int) {
-            val builder = AlertDialog.Builder(this@MainActivity)
-            builder.setTitle("Delete Confirmation")
-                .setMessage("Are you sure to remove task title ${tasks[position].title}?")
-                .setPositiveButton("OK") { _, _ ->
-                    repositoryHelper.deleteTask(tasks[position]) // Local database
-                    repositoryHelper.removeTaskFirebaseDatabase(tasks[position], username)
-                    removeTaskFromAdapter(position)
-                }
-                .setNegativeButton(
-                    "Cancel"
-                ) { dialog, _ -> dialog?.dismiss() }
-            val myDialog = builder.create()
-            myDialog.show()
+            showDialogDeleteTask(position)
         }
 
         override fun onCheckBoxClicked(position: Int, state: Boolean) {
@@ -178,12 +166,23 @@ class MainActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelected
                 repositoryHelper.writeTaskFirebaseDatabase(newTask, username) // Firebase Database
         }
         if (requestCode == CODE_EDIT_TASK && resultCode == Activity.RESULT_OK) {
-            val editTask = data?.extras?.getParcelable(EDIT_TASK_KEY) as Task
-            val itemClickPosition = data?.extras?.getInt(EDIT_TASK_POSITION_KET) as Int
-            taskAdapter.setTask(editTask, itemClickPosition)
-            repositoryHelper.updateTask(editTask) // Local Database
-            if (username != USERNAME_DEFAULT)
-                repositoryHelper.writeTaskFirebaseDatabase(editTask, username) // Firebase Database
+            val codeEditTask = data?.extras?.getInt(EDIT_TASK_POSITION_KEY) as Int
+            val codeDelTask = data?.extras?.getInt(DELETE_TASK_POSITION_KEY) as Int
+
+            if (codeEditTask != -1 && codeDelTask == -1) {
+                val editTask = data?.extras?.getParcelable(EDIT_TASK_KEY) as Task
+                taskAdapter.setTask(editTask, codeEditTask)
+                repositoryHelper.updateTask(editTask)                                           // Local Database
+                if (username != USERNAME_DEFAULT)
+                    repositoryHelper.writeTaskFirebaseDatabase(editTask, username)              // Firebase Database
+            }
+
+            if (codeEditTask == -1 && codeDelTask != -1) {
+                repositoryHelper.deleteTask(tasks[codeDelTask])                                 // Local database
+                if (username != USERNAME_DEFAULT)
+                    repositoryHelper.removeTaskFirebaseDatabase(tasks[codeDelTask], username)   // Firebase Database
+                removeTaskFromAdapter(codeDelTask)
+            }
         }
     }
 
@@ -282,5 +281,21 @@ class MainActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelected
         val array = arrayOfNulls<String>(arrayList.size)
         arrayList.toArray(array)
         return array
+    }
+
+    private fun showDialogDeleteTask(position: Int) {
+        val builder = AlertDialog.Builder(this@MainActivity)
+        builder.setTitle("Delete Confirmation")
+            .setMessage("Are you sure to remove task title ${tasks[position].title}?")
+            .setPositiveButton("OK") { _, _ ->
+                repositoryHelper.deleteTask(tasks[position]) // Local database
+                repositoryHelper.removeTaskFirebaseDatabase(tasks[position], username)
+                removeTaskFromAdapter(position)
+            }
+            .setNegativeButton(
+                "Cancel"
+            ) { dialog, _ -> dialog?.dismiss() }
+        val myDialog = builder.create()
+        myDialog.show()
     }
 }

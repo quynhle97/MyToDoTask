@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.app.AlertDialog
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.RadioButton
@@ -37,23 +38,11 @@ class DetailsTaskActivity : AppCompatActivity() {
 
         return when (item.itemId) {
             R.id.action_save-> {
-                val editTask = Task()
-
-                editTask.id = idItemClicked
-                editTask.title = edt_title.text.toString()
-                editTask.description = edt_description_note.text.toString()
-                editTask.checked = cb_completed.isChecked
-                editTask.priority = indexRadioButton
-                editTask.categorize = tv_uncategorized.text.toString()
-
-                val intent = Intent()
-                intent.putExtra(EDIT_TASK_KEY, editTask)
-                intent.putExtra(EDIT_TASK_POSITION_KET, indexItemClicked)
-                setResult(Activity.RESULT_OK, intent)
-                finish()
+                handleSaveTask()
                 return true
             }
             R.id.action_delete-> {
+                handleDeleteTask()
                 return true
             }
             else -> super.onOptionsItemSelected(item)
@@ -83,5 +72,42 @@ class DetailsTaskActivity : AppCompatActivity() {
             1 -> btnNormal.isChecked = true
             2 -> btnHigh.isChecked = true
         }
+    }
+
+    private fun handleSaveTask() {
+        val editTask = Task()
+
+        editTask.id = idItemClicked
+        editTask.title = edt_title.text.toString()
+        editTask.description = edt_description_note.text.toString()
+        editTask.checked = cb_completed.isChecked
+        editTask.priority = indexRadioButton
+        editTask.categorize = tv_uncategorized.text.toString()
+
+        val intent = Intent()
+        intent.putExtra(EDIT_TASK_KEY, editTask)
+        intent.putExtra(EDIT_TASK_POSITION_KEY, indexItemClicked)
+        intent.putExtra(DELETE_TASK_POSITION_KEY, -1)
+        setResult(Activity.RESULT_OK, intent)
+        finish()
+    }
+
+    private fun handleDeleteTask() {
+        val builder = AlertDialog.Builder(this@DetailsTaskActivity)
+        builder.setTitle("Delete Confirmation")
+            .setMessage("Are you sure to remove this task?")
+            .setPositiveButton("OK") { _, _ ->
+                val intent = Intent()
+                intent.putExtra(DELETE_TASK_POSITION_KEY, indexItemClicked)
+                intent.putExtra(EDIT_TASK_POSITION_KEY, -1)
+                setResult(Activity.RESULT_OK, intent)
+                finish()
+            }
+            .setNegativeButton(
+                "Cancel"
+            ) { dialog, _ -> dialog?.dismiss() }
+
+        val myDialog = builder.create()
+        myDialog.show()
     }
 }
