@@ -1,0 +1,68 @@
+apply plugin: 'com.android.application'
+
+apply plugin: 'kotlin-android'
+
+apply plugin: 'kotlin-android-extensions'
+
+apply plugin: "kotlin-kapt"
+
+apply plugin: 'org.jetbrains.kotlin.android.extensions'
+android {
+    compileSdkVersion 28
+    defaultConfig {
+        applicationId "group14.finalproject.mytodotask"
+        minSdkVersion 26
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    androidExtensions {
+        experimental = true
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation 'com.android.support:support-v4:28.0.0'
+    implementation 'com.android.support:design:28.0.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    def room_version = "1.1.1"
+
+    implementation "android.arch.persistence.room:runtime:$room_version"
+    kapt "android.arch.persistence.room:compiler:$room_version" // For Kotlin use kapt instead of annotationProcessor
+    implementation 'com.facebook.stetho:stetho:1.5.1'
+    implementation 'com.google.firebase:firebase-core:16.0.9'
+    implementation 'com.google.firebase:firebase-auth:17.0.0'
+    implementation 'com.google.firebase:firebase-database:17.0.0'
+
+    implementation 'com.github.bumptech.glide:glide:4.9.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
+
+    /* Dagger2 - We are going to use dagger.android which includes
+     * support for Activity and fragment injection so we need to include
+     * the following dependencies */
+    implementation 'com.google.dagger:dagger:2.23.1'
+    implementation 'com.google.dagger:dagger-android:2.23.1'
+    implementation 'com.google.dagger:dagger-android-support:2.23.1'
+    kapt 'com.google.dagger:dagger-android-processor:2.23.1'
+    kapt  "com.google.dagger:dagger-android-support:2.23.1"
+    /* Dagger2 - default dependency */
+    kapt 'com.google.dagger:dagger-compiler:2.23.1'
+
+    /* Add Kotlin support */
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.3.31'
+}
+
+apply plugin: 'com.google.gms.google-services'

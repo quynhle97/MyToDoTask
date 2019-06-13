@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:tools="http://schemas.android.com/tools"
+      tools:showIn="navigation_view">
+
+    <item android:title="Options Menu">
+        <menu>
+            <item
+                    android:id="@+id/nav_my_tasks"
+                    android:icon="@android:drawable/ic_input_get"
+                    android:title="@string/menu_task"/>
+        </menu>
+    </item>
+
+    <item android:title="@string/action_tag">
+        <menu>
+            <item
+                    android:id="@+id/nav_new_tag"
+                    android:icon="@android:drawable/stat_notify_more"
+                    android:title="@string/menu_add_new_tag"/>
+            <item
+                    android:id="@+id/nav_list_tag"
+                    android:icon="@mipmap/list_tag"
+                    android:title="@string/menu_list_tag"/>
+        </menu>
+    </item>
+
+    <item android:title="@string/action_filter">
+        <menu>
+            <item
+                    android:id="@+id/nav_new_filter"
+                    android:icon="@android:drawable/sym_contact_card"
+                    android:title="@string/menu_add_new_filter"/>
+            <item
+                    android:id="@+id/nav_uncategorized"
+                    android:icon="@drawable/ic_menu_gallery"
+                    android:title="@string/menu_categorize"/>
+        </menu>
+    </item>
+
+    <item android:title="@string/action_other">
+        <menu>
+            <item
+                    android:id="@+id/nav_settings"
+                    android:icon="@drawable/ic_menu_manage"
+                    android:title="@string/menu_settings"/>
+            <item
+                    android:id="@+id/nav_about"
+                    android:icon="@android:drawable/ic_menu_info_details"
+                    android:title="@string/menu_about"/>
+            <item
+                    android:id="@+id/nav_sign_out"
+                    android:icon="@mipmap/sign_out"
+                    android:title="@string/menu_sign_out"/>
+        </menu>
+    </item>
+</menu>

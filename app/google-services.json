@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "566346702162",
+    "firebase_url": "https://khtn-appnote.firebaseio.com",
+    "project_id": "khtn-appnote",
+    "storage_bucket": "khtn-appnote.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:566346702162:android:7b11cd4b7e0eca29",
+        "android_client_info": {
+          "package_name": "group14.finalproject.mytodotask"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "566346702162-eac5h2c0jqksrh3vnk55ur9plnoasmmv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "group14.finalproject.mytodotask",
+            "certificate_hash": "6d91211a795216795793cc0874aa8fee6d2b86d0"
+          }
+        },
+        {
+          "client_id": "566346702162-gfh2oqte98pbo81b0t4bslekqsp6v0b6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC0bCuOGyfTi67sHtlGdgzmV8bAQnpoF5c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "566346702162-gfh2oqte98pbo81b0t4bslekqsp6v0b6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
