@@ -13,7 +13,9 @@ import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.Toolbar
+import android.view.LayoutInflater
 import android.view.Menu
+import android.view.WindowManager
 import android.widget.Toast
 import group14.finalproject.mytodotask.otheractivity.*
 import group14.finalproject.mytodotask.recyclerview.TaskAdapter
@@ -22,6 +24,8 @@ import group14.finalproject.mytodotask.repo.RepositoryHelper
 import group14.finalproject.mytodotask.room.*
 import group14.finalproject.mytodotask.sharedpreferences.SharedPreferencesHelper
 import kotlinx.android.synthetic.main.content_main.*
+import kotlinx.android.synthetic.main.dialog_add_new_tag.*
+import kotlinx.android.synthetic.main.dialog_add_new_tag.view.*
 import java.util.*
 import javax.inject.Inject
 import kotlin.collections.ArrayList
@@ -34,6 +38,8 @@ class MainActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelected
 
     lateinit var tasks: ArrayList<Task>
     lateinit var taskAdapter: TaskAdapter
+
+    lateinit var tags: ArrayList<Tag>
 
     private lateinit var username: String
 
@@ -99,7 +105,8 @@ class MainActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelected
     }
 
     override fun onBackPressed() {
-        Toast.makeText(applicationContext,"SIGN OUT", Toast.LENGTH_SHORT).show()
+        SharedPreferencesHelper.clearUser()
+        repositoryHelper.deleteAll()
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START)
@@ -131,7 +138,30 @@ class MainActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelected
 
             }
             R.id.nav_new_tag -> {
-
+                val mDialogView = LayoutInflater.from(this).inflate(R.layout.dialog_add_new_tag, null)
+                val mBuilder = android.app.AlertDialog.Builder(this)
+                    .setView(mDialogView)
+                    .setTitle("Create new tag")
+                val  mAlertDialog = mBuilder.create()
+                mAlertDialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
+                mAlertDialog.show()
+                mAlertDialog.btnCreateTagDialog.setOnClickListener {
+                    mAlertDialog.dismiss()
+                    val tagName = mDialogView.edt_tag_name.text.toString()
+                    val newTag = Tag()
+                    newTag.tag = tagName
+                    // Add Local Database
+                    repositoryHelper.insertTag(newTag)
+                    // Add Firebase Database
+                    if (username != USERNAME_DEFAULT)
+                        repositoryHelper.writeTagFirebaseDatabase(newTag, username)
+                    // Add dialog view
+                    tags.add(newTag)
+                    Toast.makeText(applicationContext,"New tag added: $tagName", Toast.LENGTH_SHORT).show()
+                }
+                mAlertDialog.btnCancelDialog.setOnClickListener{
+                    mAlertDialog.dismiss()
+                }
             }
             R.id.nav_list_tag -> {
 
