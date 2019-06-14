@@ -27,6 +27,8 @@ import com.appeaser.sublimepickerlibrary.recurrencepicker.SublimeRecurrencePicke
 import com.google.ical.compat.javautil.DateIteratorFactory
 import group14.finalproject.mytodotask.*
 import group14.finalproject.mytodotask.fragments.SublimePickerFragment
+import group14.finalproject.mytodotask.notification.NotificationUtils
+//import group14.finalproject.mytodotask.notification.NotificationUtils
 import group14.finalproject.mytodotask.repo.RepositoryHelper
 import group14.finalproject.mytodotask.room.*
 import group14.finalproject.mytodotask.sharedpreferences.SharedPreferencesHelper
@@ -57,6 +59,9 @@ class TaskActivity : AppCompatActivity() {
     var alarmTime: Date? = null
     var repeat: String = ""
     val simpleDateTime = SimpleDateFormat("hh:mm dd/MM/yy")
+
+    private val mNotificationTime = java.util.Calendar.getInstance().timeInMillis + 5000 //Set after 5 seconds from the current time.
+    // Method call: NotificationUtils().setNotification(mNotificationTime, this@MainActivity)
 
     lateinit var editTask: Task
     private lateinit var username: String
@@ -175,7 +180,7 @@ class TaskActivity : AppCompatActivity() {
             // Valid options
             val bundle = Bundle();
             bundle.putParcelable("SUBLIME_OPTIONS", options);
-            pickerFrag.arguments = bundle;
+            pickerFrag.arguments = bundle
 
             pickerFrag.setStyle(DialogFragment.STYLE_NO_TITLE, 0);
             pickerFrag.show(supportFragmentManager, "SUBLIME_PICKER");

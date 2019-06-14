@@ -39,4 +39,5 @@
     <string name="label_title">Title</string>
     <string name="label_tag">Tag</string>
     <string name="chbox_completed">Completed</string>
+    <string name="notification_channel_description">Notification</string>
 </resources>
