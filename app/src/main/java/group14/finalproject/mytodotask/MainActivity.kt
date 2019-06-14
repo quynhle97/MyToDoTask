@@ -68,8 +68,8 @@ class MainActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelected
 
         val fab: FloatingActionButton = findViewById(R.id.fab)
         fab.setOnClickListener { view ->
-//            val intent = Intent(this@MainActivity, NewTaskActivity::class.java)
-            val intent = Intent(this@MainActivity, TaskActivity::class.java)
+            val intent = Intent(this@MainActivity, NewTaskActivity::class.java)
+//            val intent = Intent(this@MainActivity, TaskActivity::class.java)
             intent.putExtra(INDEX_NEW_DETAIL, 0)
             startActivityForResult(intent, CODE_ADD_NEW_TASK)
         }
@@ -86,8 +86,8 @@ class MainActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelected
 
     private val taskItemClickListener = object : TaskItemClickListener {
         override fun onItemClicked(position: Int) {
-//            val intent = Intent(this@MainActivity, DetailsTaskActivity::class.java)
-            val intent = Intent(this@MainActivity, TaskActivity::class.java)
+            val intent = Intent(this@MainActivity, DetailsTaskActivity::class.java)
+//            val intent = Intent(this@MainActivity, TaskActivity::class.java)
             intent.putExtra(INDEX_NEW_DETAIL, 1)
             intent.putExtra(EDIT_TASK, tasks[position])
             intent.putExtra(EDIT_TASK_POSITION, position)

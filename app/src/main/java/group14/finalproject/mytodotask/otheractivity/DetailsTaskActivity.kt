@@ -1,13 +1,13 @@
 package group14.finalproject.mytodotask.otheractivity
 
-import android.app.Activity
-import android.app.DatePickerDialog
+import android.app.*
 import android.content.Intent
-import android.app.TimePickerDialog
+import android.content.Context
 import android.icu.util.Calendar
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
+import android.support.v4.app.NotificationCompat
 import android.support.v7.app.AlertDialog
 import android.text.format.DateFormat
 import android.view.LayoutInflater
@@ -62,6 +62,7 @@ class DetailsTaskActivity : AppCompatActivity() {
 
         (application as MyApplication).getAppComponent().inject(this)
         username = SharedPreferencesHelper.readString(USERNAME_KEY)
+
         setInitialView()
 
         radio_priority_choice.setOnCheckedChangeListener { group, checkedId ->
@@ -89,7 +90,7 @@ class DetailsTaskActivity : AppCompatActivity() {
 
         var sublimePicker = SublimePicker(this)
         var sublimeOptions = SublimeOptions() // This is optional
-        sublimeOptions.setPickerToShow(SublimeOptions.Picker.REPEAT_OPTION_PICKER) // I want the recurrence picker to show.
+        sublimeOptions.pickerToShow = SublimeOptions.Picker.REPEAT_OPTION_PICKER // I want the recurrence picker to show.
         sublimeOptions.setDisplayOptions(SublimeOptions.ACTIVATE_RECURRENCE_PICKER) // I only want the recurrence picker, not the date/time pickers.
         sublimePicker.initializePicker(sublimeOptions,mListener)
 
