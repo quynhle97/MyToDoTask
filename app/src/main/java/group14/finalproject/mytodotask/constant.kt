@@ -39,3 +39,7 @@ const val FLAG_TAGS = 1
 const val FLAG_COMPLETED = 21
 const val FLAG_UNCOMPLETED = 22
 const val FLAG_NONE = 23
+
+// Notification
+const val NOTIFICATION_ID = 159197
+const val NOTIFICATION_REQUEST_CODE = 100

@@ -1,9 +1,8 @@
 package group14.finalproject.mytodotask.otheractivity
 
 import android.annotation.SuppressLint
-import android.app.Activity
-import android.app.DatePickerDialog
-import android.app.TimePickerDialog
+import android.app.*
+import android.content.Context
 import android.content.Intent
 import android.icu.util.Calendar
 import android.support.v7.app.AppCompatActivity
@@ -26,7 +25,10 @@ import com.appeaser.sublimepickerlibrary.helpers.SublimeOptions
 import com.appeaser.sublimepickerlibrary.recurrencepicker.SublimeRecurrencePicker
 import com.google.ical.compat.javautil.DateIteratorFactory
 import group14.finalproject.mytodotask.*
+import group14.finalproject.mytodotask.alarm.AlarmReceiver
 import group14.finalproject.mytodotask.fragments.SublimePickerFragment
+import group14.finalproject.mytodotask.notification.NotificationUtils
+//import group14.finalproject.mytodotask.notification.NotificationUtils
 import group14.finalproject.mytodotask.repo.RepositoryHelper
 import group14.finalproject.mytodotask.room.*
 import group14.finalproject.mytodotask.sharedpreferences.SharedPreferencesHelper
@@ -57,6 +59,9 @@ class TaskActivity : AppCompatActivity() {
     var alarmTime: Date? = null
     var repeat: String = ""
     val simpleDateTime = SimpleDateFormat("hh:mm dd/MM/yy")
+
+    private var mNotificationTime = java.util.Calendar.getInstance().timeInMillis + 5000 //Set after 5 seconds from the current time.
+    // Method call: NotificationUtils().setNotification(mNotificationTime, this@MainActivity)
 
     lateinit var editTask: Task
     private lateinit var username: String
@@ -175,7 +180,7 @@ class TaskActivity : AppCompatActivity() {
             // Valid options
             val bundle = Bundle();
             bundle.putParcelable("SUBLIME_OPTIONS", options);
-            pickerFrag.arguments = bundle;
+            pickerFrag.arguments = bundle
 
             pickerFrag.setStyle(DialogFragment.STYLE_NO_TITLE, 0);
             pickerFrag.show(supportFragmentManager, "SUBLIME_PICKER");
@@ -294,8 +299,20 @@ class TaskActivity : AppCompatActivity() {
             R.id.action_save-> {
                 if (indexNewOrDetail == 0) {
                     handleSaveNewTask()
+                    // Notification
+                    mNotificationTime = this.reminderTime?.time!!
+                    NotificationUtils().setNotification(mNotificationTime, this)
+                    // Alarm
+                    setTImer(alarmTime?.time!!, this@TaskActivity)
+                    NotificationUtils().setNotification(alarmTime?.time!!, this)
                 } else if (indexNewOrDetail == 1) {
                     handleSaveEditTask()
+                    // Notification
+                    mNotificationTime = this.reminderTime?.time!!
+                    NotificationUtils().setNotification(mNotificationTime, this)
+                    // Alarm
+                    setTImer(alarmTime?.time!!, this@TaskActivity)
+                    NotificationUtils().setNotification(alarmTime?.time!!, this)
                 }
                 return true
             }
@@ -560,5 +577,18 @@ class TaskActivity : AppCompatActivity() {
 
         val myDialog = builder.create()
         myDialog.show()
+    }
+
+    private fun setTImer(timeInMilliSeconds: Long, activity: Activity) {
+        if (timeInMilliSeconds > 0) {
+            val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+            val calendar = java.util.Calendar.getInstance()
+            calendar.timeInMillis = timeInMilliSeconds
+
+            val intent = Intent(this, AlarmReceiver::class.java)
+            val pendingIntent = PendingIntent.getBroadcast(activity, 0, intent, 0)
+            alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
+        }
     }
 }

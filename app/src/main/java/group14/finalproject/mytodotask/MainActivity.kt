@@ -251,6 +251,9 @@ class MainActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelected
 
     private fun signOut() {
         SharedPreferencesHelper.clearUser()
+        tasks = ArrayList()
+        tags = ArrayList()
+        relationships = ArrayList()
         repositoryHelper.deleteAll()                                        // Delete Local Database
     }
 
