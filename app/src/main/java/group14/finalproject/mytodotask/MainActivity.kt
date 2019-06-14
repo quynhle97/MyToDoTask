@@ -193,12 +193,12 @@ class MainActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelected
             tasks = repositoryHelper.getTasksFirebaseDatabase(username)
             tags = repositoryHelper.getTagsFirebaseDatabase(username)
             relationships = repositoryHelper.getRelationshipsFirebaseDatabase(username)
+            Toast.makeText(applicationContext, "$tasks", Toast.LENGTH_LONG).show()
         } else {
             tasks = repositoryHelper.getAllTasks() as ArrayList<Task>
             tags = repositoryHelper.getAllTags() as ArrayList<Tag>
             relationships = repositoryHelper.getAllRelationships() as ArrayList<Relationship>
         }
-
         setupRecyclerView()
     }
 
