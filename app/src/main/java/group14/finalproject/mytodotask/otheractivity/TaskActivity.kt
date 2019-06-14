@@ -60,7 +60,7 @@ class TaskActivity : AppCompatActivity() {
     var repeat: String = ""
     val simpleDateTime = SimpleDateFormat("hh:mm dd/MM/yy")
 
-    private val mNotificationTime = java.util.Calendar.getInstance().timeInMillis + 5000 //Set after 5 seconds from the current time.
+    private var mNotificationTime = java.util.Calendar.getInstance().timeInMillis + 5000 //Set after 5 seconds from the current time.
     // Method call: NotificationUtils().setNotification(mNotificationTime, this@MainActivity)
 
     lateinit var editTask: Task
@@ -299,8 +299,12 @@ class TaskActivity : AppCompatActivity() {
             R.id.action_save-> {
                 if (indexNewOrDetail == 0) {
                     handleSaveNewTask()
+                    mNotificationTime = this.reminderTime?.time!!
+                    NotificationUtils().setNotification(mNotificationTime, this)
                 } else if (indexNewOrDetail == 1) {
                     handleSaveEditTask()
+                    mNotificationTime = this.reminderTime?.time!!
+                    NotificationUtils().setNotification(mNotificationTime, this)
                 }
                 return true
             }

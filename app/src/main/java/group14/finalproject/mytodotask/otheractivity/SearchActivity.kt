@@ -76,6 +76,8 @@ class SearchActivity : AppCompatActivity() {
             for (i in 0 until checkedSearch.size)
                 if (checkedSearch[i])
                     finalTasks.add(arrListTasks[i])
+
+            // cần lọc tags
             setTasksAdapter(finalTasks)
         }
     }
