@@ -7,15 +7,13 @@ import android.app.TimePickerDialog
 import android.icu.util.Calendar
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v4.app.DialogFragment
 import android.support.v7.app.AlertDialog
 import android.text.format.DateFormat
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.DatePicker
-import android.widget.RadioButton
-import android.widget.TimePicker
-import android.widget.Toast
+import android.widget.*
 import group14.finalproject.mytodotask.*
 import group14.finalproject.mytodotask.repo.RepositoryHelper
 import group14.finalproject.mytodotask.room.*
@@ -26,6 +24,16 @@ import java.util.*
 import kotlinx.android.synthetic.main.dialog_add_new_tag.*
 import kotlinx.android.synthetic.main.dialog_add_new_tag.view.*
 import javax.inject.Inject
+import android.widget.Toast
+import com.appeaser.sublimepickerlibrary.helpers.SublimeListenerAdapter
+import com.appeaser.sublimepickerlibrary.recurrencepicker.SublimeRecurrencePicker
+import com.appeaser.sublimepickerlibrary.SublimePicker
+import com.appeaser.sublimepickerlibrary.datepicker.SelectedDate
+import com.appeaser.sublimepickerlibrary.helpers.SublimeOptions
+import com.appeaser.sublimepickerlibrary.recurrencepicker.EventRecurrence
+import com.google.ical.compat.javautil.DateIteratorFactory
+import group14.finalproject.mytodotask.fragments.SublimePickerFragment
+
 
 class DetailsTaskActivity : AppCompatActivity() {
     @Inject
@@ -36,8 +44,10 @@ class DetailsTaskActivity : AppCompatActivity() {
     var indexRadioButton: Int = 1
     var indexItemClicked: Int = -1
     var idItemClicked: Int = -1
+
     var reminderTime: Date? = null
     var alarmTime: Date? = null
+    var repeat: String = ""
 
     lateinit var editTask: Task
     lateinit var tags: ArrayList<Tag>
@@ -57,6 +67,103 @@ class DetailsTaskActivity : AppCompatActivity() {
         radio_priority_choice.setOnCheckedChangeListener { group, checkedId ->
             val radio: RadioButton = group.findViewById(checkedId)
             indexRadioButton = group.indexOfChild(radio)
+        }
+
+        // Sublime Picker
+        val mListener = object : SublimeListenerAdapter() {
+            override fun onDateTimeRecurrenceSet(
+                sublimeMaterialPicker: SublimePicker?,
+                selectedDate: SelectedDate?,
+                hourOfDay: Int,
+                minute: Int,
+                recurrenceOption: SublimeRecurrencePicker.RecurrenceOption?,
+                recurrenceRule: String?
+            ) {
+                Toast.makeText(applicationContext, recurrenceRule, Toast.LENGTH_LONG).show()
+            }
+
+            override fun onCancelled() {
+                // Handle click on `Cancel` button
+            }
+        }
+
+        var sublimePicker = SublimePicker(this)
+        var sublimeOptions = SublimeOptions() // This is optional
+        sublimeOptions.setPickerToShow(SublimeOptions.Picker.REPEAT_OPTION_PICKER) // I want the recurrence picker to show.
+        sublimeOptions.setDisplayOptions(SublimeOptions.ACTIVATE_RECURRENCE_PICKER) // I only want the recurrence picker, not the date/time pickers.
+        sublimePicker.initializePicker(sublimeOptions,mListener)
+
+        val mFragmentCallback = object : SublimePickerFragment.Callback {
+            override fun onCancelled() {
+            }
+
+            override fun onDateTimeRecurrenceSet(
+                selectedDate: SelectedDate?,
+                hourOfDay: Int,
+                minute: Int,
+                recurrenceOption: SublimeRecurrencePicker.RecurrenceOption?,
+                recurrenceRule: String?
+            ) {
+                when (recurrenceOption) {
+                    SublimeRecurrencePicker.RecurrenceOption.DOES_NOT_REPEAT -> {
+                        repeat = ""
+                        tv_repeat.text = ""
+                    }
+                    SublimeRecurrencePicker.RecurrenceOption.DAILY -> {
+                        repeat = "FREQ=DAILY"
+                        tv_repeat.text = "Daily"
+                    }
+                    SublimeRecurrencePicker.RecurrenceOption.WEEKLY -> {
+                        repeat = "FREQ=WEEKLY"
+                        tv_repeat.text = "Weekly"
+                    }
+                    SublimeRecurrencePicker.RecurrenceOption.MONTHLY -> {
+                        repeat = "FREQ=MONTHLY"
+                        tv_repeat.text = "Monthly"
+                    }
+                    SublimeRecurrencePicker.RecurrenceOption.YEARLY -> {
+                        repeat = "FREQ=YEARLY"
+                        tv_repeat.text = "Yearly"
+                    }
+                    SublimeRecurrencePicker.RecurrenceOption.CUSTOM -> {
+                        repeat = "$recurrenceRule"
+                        tv_repeat.text = "Custom"
+                    }
+                }
+                var res = ""
+                if (repeat != "") {
+                    val tmp = "RRULE:${repeat};COUNT=1"
+                    var di = DateIteratorFactory.createDateIterable(
+                        tmp,
+                        reminderTime,
+                        TimeZone.getDefault(),
+                        true
+                    )
+                    res = di.first().toString()
+                }
+                Toast.makeText(applicationContext, res, Toast.LENGTH_LONG).show()
+            }
+        }
+
+        tv_repeat.setOnClickListener {
+            if (reminderTime == null) {
+                Toast.makeText(applicationContext, "Please choose reminder time first!", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
+            val pickerFrag = SublimePickerFragment();
+            pickerFrag.setCallback(mFragmentCallback)
+            // Options
+            val options = SublimeOptions();
+            options.pickerToShow = SublimeOptions.Picker.REPEAT_OPTION_PICKER
+            options.setDisplayOptions(SublimeOptions.ACTIVATE_RECURRENCE_PICKER)
+
+            // Valid options
+            val bundle = Bundle();
+            bundle.putParcelable("SUBLIME_OPTIONS", options);
+            pickerFrag.arguments = bundle;
+
+            pickerFrag.setStyle(DialogFragment.STYLE_NO_TITLE, 0);
+            pickerFrag.show(supportFragmentManager, "SUBLIME_PICKER");
         }
 
         tv_add_tags.setOnClickListener {
@@ -177,6 +284,8 @@ class DetailsTaskActivity : AppCompatActivity() {
             2 -> btnHigh.isChecked = true
         }
 
+//        tv_repeat.setOnClickListener()
+
         tv_add_reminder.setOnClickListener {
             // Use the current time as the default values for the picker
             val c = Calendar.getInstance()
@@ -191,7 +300,7 @@ class DetailsTaskActivity : AppCompatActivity() {
                 c.set(Calendar.HOUR_OF_DAY, hourOfDay)
                 c.set(Calendar.MINUTE, minute)
                 val datePickerDialog = DatePickerDialog(this, DatePickerDialog.OnDateSetListener { datePicker: DatePicker, year: Int, month: Int, day: Int ->
-                    tv_add_reminder.setText("Hour: $hourOfDay, minute: $minute")
+                    tv_add_reminder.text = "Hour: $hourOfDay, minute: $minute"
                     c.set(Calendar.YEAR, year)
                     c.set(Calendar.MONTH, month)
                     c.set(Calendar.DAY_OF_MONTH, day)
@@ -199,7 +308,7 @@ class DetailsTaskActivity : AppCompatActivity() {
                     if (alarmTime == null) {
                         alarmTime = reminderTime
                     }
-                    val simpleDateTime = SimpleDateFormat("hh:mm dd/mm/yy")
+                    val simpleDateTime = SimpleDateFormat("hh:mm dd/mm/yy", Locale.ENGLISH)
                     tv_add_reminder.text = simpleDateTime.format(reminderTime)
                 }, year, month, day)
                 datePickerDialog.setTitle("Select date")
