@@ -18,11 +18,7 @@
                 android:name=".MainActivity"
                 android:theme="@style/AppTheme.NoActionBar">
         </activity>
-        <activity android:name=".otheractivity.DetailsTaskActivity">
-        </activity>
         <activity android:name=".otheractivity.AboutActivity">
-        </activity>
-        <activity android:name=".otheractivity.NewTaskActivity">
         </activity>
         <activity
                 android:name=".FirstActivity"

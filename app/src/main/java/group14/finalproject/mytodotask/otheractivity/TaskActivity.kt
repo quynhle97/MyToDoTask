@@ -8,6 +8,7 @@ import android.content.Intent
 import android.icu.util.Calendar
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v4.app.DialogFragment
 import android.support.v7.app.AlertDialog
 import android.text.format.DateFormat
 import android.view.LayoutInflater
@@ -18,7 +19,14 @@ import android.widget.DatePicker
 import android.widget.RadioButton
 import android.widget.TimePicker
 import android.widget.Toast
+import com.appeaser.sublimepickerlibrary.SublimePicker
+import com.appeaser.sublimepickerlibrary.datepicker.SelectedDate
+import com.appeaser.sublimepickerlibrary.helpers.SublimeListenerAdapter
+import com.appeaser.sublimepickerlibrary.helpers.SublimeOptions
+import com.appeaser.sublimepickerlibrary.recurrencepicker.SublimeRecurrencePicker
+import com.google.ical.compat.javautil.DateIteratorFactory
 import group14.finalproject.mytodotask.*
+import group14.finalproject.mytodotask.fragments.SublimePickerFragment
 import group14.finalproject.mytodotask.repo.RepositoryHelper
 import group14.finalproject.mytodotask.room.*
 import group14.finalproject.mytodotask.sharedpreferences.SharedPreferencesHelper
@@ -47,6 +55,9 @@ class TaskActivity : AppCompatActivity() {
 
     var reminderTime: Date? = null
     var alarmTime: Date? = null
+    var repeat: String = ""
+    val simpleDateTime = SimpleDateFormat("hh:mm dd/MM/yy")
+
     lateinit var editTask: Task
     private lateinit var username: String
 
@@ -70,6 +81,158 @@ class TaskActivity : AppCompatActivity() {
         radio_priority_choice.setOnCheckedChangeListener { group, checkedId ->
             val radio: RadioButton = group.findViewById(checkedId)
             indexRadioButton = group.indexOfChild(radio)
+        }
+
+        // Sublime Picker
+        val mListener = object : SublimeListenerAdapter() {
+            override fun onDateTimeRecurrenceSet(
+                sublimeMaterialPicker: SublimePicker?,
+                selectedDate: SelectedDate?,
+                hourOfDay: Int,
+                minute: Int,
+                recurrenceOption: SublimeRecurrencePicker.RecurrenceOption?,
+                recurrenceRule: String?
+            ) {
+                Toast.makeText(applicationContext, recurrenceRule, Toast.LENGTH_LONG).show()
+            }
+
+            override fun onCancelled() {
+                // Handle click on `Cancel` button
+            }
+        }
+
+        var sublimePicker = SublimePicker(this)
+        var sublimeOptions = SublimeOptions() // This is optional
+        sublimeOptions.setPickerToShow(SublimeOptions.Picker.REPEAT_OPTION_PICKER) // I want the recurrence picker to show.
+        sublimeOptions.setDisplayOptions(SublimeOptions.ACTIVATE_RECURRENCE_PICKER) // I only want the recurrence picker, not the date/time pickers.
+        sublimePicker.initializePicker(sublimeOptions,mListener)
+
+        val mFragmentCallback = object : SublimePickerFragment.Callback {
+            override fun onCancelled() {
+            }
+
+            override fun onDateTimeRecurrenceSet(
+                selectedDate: SelectedDate?,
+                hourOfDay: Int,
+                minute: Int,
+                recurrenceOption: SublimeRecurrencePicker.RecurrenceOption?,
+                recurrenceRule: String?
+            ) {
+                when (recurrenceOption) {
+                    SublimeRecurrencePicker.RecurrenceOption.DOES_NOT_REPEAT -> {
+                        repeat = ""
+                        tv_repeat.text = ""
+                    }
+                    SublimeRecurrencePicker.RecurrenceOption.DAILY -> {
+                        repeat = "FREQ=DAILY"
+                        tv_repeat.text = "Daily"
+                    }
+                    SublimeRecurrencePicker.RecurrenceOption.WEEKLY -> {
+                        repeat = "FREQ=WEEKLY"
+                        tv_repeat.text = "Weekly"
+                    }
+                    SublimeRecurrencePicker.RecurrenceOption.MONTHLY -> {
+                        repeat = "FREQ=MONTHLY"
+                        tv_repeat.text = "Monthly"
+                    }
+                    SublimeRecurrencePicker.RecurrenceOption.YEARLY -> {
+                        repeat = "FREQ=YEARLY"
+                        tv_repeat.text = "Yearly"
+                    }
+                    SublimeRecurrencePicker.RecurrenceOption.CUSTOM -> {
+                        repeat = "$recurrenceRule"
+                        tv_repeat.text = "Custom"
+                    }
+                }
+                var res = ""
+                if (repeat != "") {
+                    val tmp = "RRULE:${repeat};COUNT=1"
+                    var di = DateIteratorFactory.createDateIterable(
+                        tmp,
+                        reminderTime,
+                        TimeZone.getDefault(),
+                        true
+                    )
+                    res = di.first().toString()
+                }
+                Toast.makeText(applicationContext, res, Toast.LENGTH_LONG).show()
+            }
+        }
+
+        tv_repeat.setOnClickListener {
+            if (reminderTime == null) {
+                Toast.makeText(applicationContext, "Please choose reminder time first!", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
+            val pickerFrag = SublimePickerFragment();
+            pickerFrag.setCallback(mFragmentCallback)
+            // Options
+            val options = SublimeOptions();
+            options.pickerToShow = SublimeOptions.Picker.REPEAT_OPTION_PICKER
+            options.setDisplayOptions(SublimeOptions.ACTIVATE_RECURRENCE_PICKER)
+            options.setRecurrenceParams(SublimeRecurrencePicker.RecurrenceOption.CUSTOM, editTask.repeat)
+
+            // Valid options
+            val bundle = Bundle();
+            bundle.putParcelable("SUBLIME_OPTIONS", options);
+            pickerFrag.arguments = bundle;
+
+            pickerFrag.setStyle(DialogFragment.STYLE_NO_TITLE, 0);
+            pickerFrag.show(supportFragmentManager, "SUBLIME_PICKER");
+        }
+
+        tv_add_reminder.setOnClickListener {
+            // Use the current time as the default values for the picker
+            val c = Calendar.getInstance()
+            val hour = c.get(Calendar.HOUR_OF_DAY)
+            val minute = c.get(Calendar.MINUTE)
+            val year = c.get(Calendar.YEAR)
+            val month = c.get(Calendar.MONTH)
+            val day = c.get(Calendar.DAY_OF_MONTH)
+
+            // Create a new instance of TimePickerDialog and return it
+            val timePickerDialog =  TimePickerDialog(this, TimePickerDialog.OnTimeSetListener { timePicker: TimePicker, hourOfDay: Int, minute: Int ->
+                c.set(Calendar.HOUR_OF_DAY, hourOfDay)
+                c.set(Calendar.MINUTE, minute)
+                val datePickerDialog = DatePickerDialog(this, DatePickerDialog.OnDateSetListener { datePicker: DatePicker, year: Int, month: Int, day: Int ->
+                    c.set(Calendar.YEAR, year)
+                    c.set(Calendar.MONTH, month)
+                    c.set(Calendar.DAY_OF_MONTH, day)
+                    reminderTime = c.time
+                    tv_add_reminder.text = simpleDateTime.format(reminderTime)
+                }, year, month, day)
+                datePickerDialog.setTitle("Select date")
+                datePickerDialog.show()
+            }, hour, minute, DateFormat.is24HourFormat(this))
+            timePickerDialog.setTitle("Select Time")
+            timePickerDialog.show()
+        }
+
+        tv_add_alarm.setOnClickListener {
+            // Use the current time as the default values for the picker
+            val c = Calendar.getInstance()
+            val hour = c.get(Calendar.HOUR_OF_DAY)
+            val minute = c.get(Calendar.MINUTE)
+            val year = c.get(Calendar.YEAR)
+            val month = c.get(Calendar.MONTH)
+            val day = c.get(Calendar.DAY_OF_MONTH)
+
+            // Create a new instance of TimePickerDialog and return it
+            val timePickerDialog =  TimePickerDialog(this, TimePickerDialog.OnTimeSetListener { timePicker: TimePicker, hourOfDay: Int, minute: Int ->
+                c.set(Calendar.HOUR_OF_DAY, hourOfDay)
+                c.set(Calendar.MINUTE, minute)
+                val datePickerDialog = DatePickerDialog(this, DatePickerDialog.OnDateSetListener { datePicker: DatePicker, year: Int, month: Int, day: Int ->
+                    c.set(Calendar.YEAR, year)
+                    c.set(Calendar.MONTH, month)
+                    c.set(Calendar.DAY_OF_MONTH, day)
+                    alarmTime = c.time
+                    tv_add_alarm.text = simpleDateTime.format(alarmTime)
+                }, year, month, day)
+                datePickerDialog.setTitle("Select date")
+                datePickerDialog.show()
+            }, hour, minute, DateFormat.is24HourFormat(this))
+            timePickerDialog.setTitle("Select Time")
+            timePickerDialog.show()
         }
 
         tv_add_tags.setOnClickListener {
@@ -175,43 +338,26 @@ class TaskActivity : AppCompatActivity() {
         val btnNormal = radio_priority_choice.findViewById<RadioButton>(R.id.btnNormal)
         val btnHigh = radio_priority_choice.findViewById<RadioButton>(R.id.btnHigh)
 
+        if (editTask.remindertime != "") reminderTime = simpleDateTime.parse(editTask.remindertime)
+        if (editTask.alarmtime != "") alarmTime = simpleDateTime.parse(editTask.alarmtime)
+        tv_add_reminder.text = editTask.remindertime
+        tv_add_alarm.text = editTask.alarmtime
+
+        when (editTask.repeat) {
+            "" -> tv_repeat.text = ""
+            "FREQ=DAILY" -> tv_repeat.text = "Daily"
+            "FREQ=WEEKLY" -> tv_repeat.text = "Weekly"
+            "FREQ=MONTHLY" -> tv_repeat.text = "Monthly"
+            "FREQ=YEARLY" -> tv_repeat.text = "Yearly"
+            else -> tv_repeat.text = "Custom"
+        }
+
         when (indexRadioButton) {
             0 -> btnLow.isChecked = true
             1 -> btnNormal.isChecked = true
             2 -> btnHigh.isChecked = true
         }
 
-        tv_add_reminder.setOnClickListener {
-            // Use the current time as the default values for the picker
-            val c = Calendar.getInstance()
-            val hour = c.get(Calendar.HOUR_OF_DAY)
-            val minute = c.get(Calendar.MINUTE)
-            val year = c.get(Calendar.YEAR)
-            val month = c.get(Calendar.MONTH)
-            val day = c.get(Calendar.DAY_OF_MONTH)
-
-            // Create a new instance of TimePickerDialog and return it
-            val timePickerDialog =  TimePickerDialog(this, TimePickerDialog.OnTimeSetListener { timePicker: TimePicker, hourOfDay: Int, minute: Int ->
-                c.set(Calendar.HOUR_OF_DAY, hourOfDay)
-                c.set(Calendar.MINUTE, minute)
-                val datePickerDialog = DatePickerDialog(this, DatePickerDialog.OnDateSetListener { datePicker: DatePicker, year: Int, month: Int, day: Int ->
-                    tv_add_reminder.text = "Hour: $hourOfDay, minute: $minute"
-                    c.set(Calendar.YEAR, year)
-                    c.set(Calendar.MONTH, month)
-                    c.set(Calendar.DAY_OF_MONTH, day)
-                    reminderTime = c.time
-                    if (alarmTime == null) {
-                        alarmTime = reminderTime
-                    }
-                    val simpleDateTime = SimpleDateFormat("hh:mm dd/mm/yy")
-                    tv_add_reminder.text = simpleDateTime.format(reminderTime)
-                }, year, month, day)
-                datePickerDialog.setTitle("Select date")
-                datePickerDialog.show()
-            }, hour, minute, DateFormat.is24HourFormat(this))
-            timePickerDialog.setTitle("Select Time")
-            timePickerDialog.show()
-        }
     }
 
     private fun getInitialDatabaseTagsAndRelationships() {
@@ -226,6 +372,9 @@ class TaskActivity : AppCompatActivity() {
         newTask.description = edt_description_note.text.toString()
         newTask.categorize = tv_add_tags.text.toString()
         newTask.priority = indexRadioButton
+        newTask.remindertime = tv_add_reminder.text.toString()
+        newTask.alarmtime = tv_add_alarm.text.toString()
+        newTask.repeat = repeat
 
         val intent = Intent()
         val id = repositoryHelper.insertTask(newTask)           // Local Database
@@ -246,6 +395,9 @@ class TaskActivity : AppCompatActivity() {
         editTask.checked = cb_completed.isChecked
         editTask.priority = indexRadioButton
         editTask.categorize = tv_add_tags.text.toString()
+        editTask.remindertime = tv_add_reminder.text.toString()
+        editTask.alarmtime = tv_add_alarm.text.toString()
+        editTask.repeat = repeat
 
         val intent = Intent()
         intent.putExtra(EDIT_TASK_KEY, editTask)
