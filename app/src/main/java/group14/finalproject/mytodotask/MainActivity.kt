@@ -17,6 +17,10 @@ import android.view.LayoutInflater
 import android.view.Menu
 import android.view.WindowManager
 import android.widget.Toast
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import group14.finalproject.mytodotask.otheractivity.*
 import group14.finalproject.mytodotask.recyclerview.TaskAdapter
 import group14.finalproject.mytodotask.recyclerview.TaskItemClickListener
@@ -185,13 +189,61 @@ class MainActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelected
     }
 
     private fun initial() {
-        // Local Database
-        tasks = repositoryHelper.getAllTasks() as ArrayList<Task>
-        tags = repositoryHelper.getAllTags() as ArrayList<Tag>
-        relationships = repositoryHelper.getAllRelationships() as ArrayList<Relationship>
-        // Firebase Database
+        tasks = ArrayList()
+        tags = ArrayList()
+        relationships = ArrayList()
+        // Load data from Firebase Database
+        repositoryHelper.getFirebaseReference().child(TASK_FIREBASE_DATABASE).child(username).addValueEventListener(object: ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {
+                Toast.makeText(applicationContext,"Load tasks from Firebase failed", Toast.LENGTH_SHORT).show()
+                tasks = repositoryHelper.getAllTasks() as ArrayList<Task>                                               // Local Database
+            }
 
-        // Set Database for Local from Firebase Database
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val value = dataSnapshot.children
+                value.forEach {
+                    val m = it.getValue(Task::class.java)
+                    if (m != null) {
+                        tasks.add(m)
+                        Toast.makeText(applicationContext,"$m", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        })
+        repositoryHelper.getFirebaseReference().child(TAG_FIREBASE_DATABASE).child(username).addValueEventListener(object: ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {
+                Toast.makeText(applicationContext,"Load tags from Firebase failed", Toast.LENGTH_SHORT).show()
+                tags = repositoryHelper.getAllTags() as ArrayList<Tag>                                                  // Local Database
+            }
+
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val value = dataSnapshot.children
+                value.forEach {
+                    val m = it.getValue(Tag::class.java)
+                    if (m != null) {
+                        tags.add(m)
+                        Toast.makeText(applicationContext,"$m", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        })
+        repositoryHelper.getFirebaseReference().child(RELATIONSHIP_FIREBASE_DATABASE).child(username).addValueEventListener(object: ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {
+                Toast.makeText(applicationContext,"Load relationships from Firebase failed", Toast.LENGTH_SHORT).show()
+                relationships = repositoryHelper.getAllRelationships() as ArrayList<Relationship>                       // Local Database
+            }
+
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val value = dataSnapshot.children
+                value.forEach {
+                    val m = it.getValue(Relationship::class.java)
+                    if (m != null) {
+                        relationships.add(m)
+                        Toast.makeText(applicationContext,"$m", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        })
         setupRecyclerView()
     }
 
@@ -204,9 +256,10 @@ class MainActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelected
 
     private fun signOut() {
         SharedPreferencesHelper.clearUser()
-        repositoryHelper.deleteAll()                                    // Delete Local Database
-        repositoryHelper.removeAllTasksFirebaseDatabase(username)       // Delete Tasks Firebase Database
-        repositoryHelper.removeAllTagsFirebaseDatabase(username)        // Delete Tags Firebase Database
+        repositoryHelper.deleteAll()                                        // Delete Local Database
+        repositoryHelper.removeAllTasksFirebaseDatabase(username)           // Delete Tasks Firebase Database
+        repositoryHelper.removeAllTagsFirebaseDatabase(username)            // Delete Tags Firebase Database
+        repositoryHelper.removeAllRelationshipsFirebaseDatabase(username)   // Delete Relationship Firebase Database
     }
 
     private fun removeTaskFromAdapter(position: Int) {

@@ -11,11 +11,10 @@ class RepositoryManager @Inject constructor (taskDao: TaskDAO, tagDAO: TagDAO, r
     private val taskDao: TaskDAO = taskDao
     private val tagDao: TagDAO = tagDAO
     private val relationshipDao: RelationshipDAO = relationshipDAO
-    private val firebaseDatabase: FirebaseDatabase = firebaseDatabase
     private val firebaseReference: DatabaseReference = firebaseDatabase.reference
 
-    override fun getFirebaseDatabase(): FirebaseDatabase {
-        return firebaseDatabase
+    override fun getFirebaseReference(): DatabaseReference {
+        return firebaseReference
     }
 
     override fun removeAllTasksFirebaseDatabase(username: String) {
