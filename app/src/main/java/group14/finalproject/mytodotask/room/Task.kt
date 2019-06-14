@@ -14,12 +14,12 @@ data class Task(
     var date: String,
     var time: String,
     var priority: Int,
-    var locationX: Float,
-    var locationY: Float,
+    var alarmtime: String,
+    var remindertime: String,
     var categorize: String,
-    var reminder: String,
+    var repeat: String,
     var attach: String,
     var description: String
 ) : Parcelable  {
-    constructor() : this(null, "", false,"","", 0, .0f, 0.0f, "", "", "", "")
+    constructor() : this(null, "", false,"","", 0, "", "", "", "", "", "")
 }

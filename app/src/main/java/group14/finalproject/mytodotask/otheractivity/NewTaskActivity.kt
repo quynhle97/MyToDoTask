@@ -46,6 +46,9 @@ class NewTaskActivity : AppCompatActivity() {
         getInitalDatabaseTagsAndRelationships()
         username = SharedPreferencesHelper.readString(USERNAME_KEY)
 
+        listCheckedTags = BooleanArray(tags.size)
+        listTagsName = ArrayList(tags.size)
+
         tv_add_tags.setOnClickListener {
             listCheckedTags = BooleanArray(tags.size)
             listTagsName = ArrayList(tags.size)
@@ -74,7 +77,8 @@ class NewTaskActivity : AppCompatActivity() {
 
         return when (item.itemId) {
             R.id.action_save-> {
-                handleSaveNewTask()
+                if (listTagsName != null && listCheckedTags != null)
+                    handleSaveNewTask()
                 return true
             }
             else -> super.onOptionsItemSelected(item)
@@ -93,7 +97,9 @@ class NewTaskActivity : AppCompatActivity() {
         val id = repositoryHelper.insertTask(newTask)           // Local Database
         newTask.id = id.toInt()
         repositoryHelper.writeTaskFirebaseDatabase(newTask, username) // Firebase Database
-        handleSaveRelationship(newTask.id!!)
+
+        if (listCheckedTags != null && listTagsName != null)
+            handleSaveRelationship(newTask.id!!)
 
         intent.putExtra(NEW_TASK_KEY, newTask)
         setResult(Activity.RESULT_OK, intent)
@@ -162,8 +168,6 @@ class NewTaskActivity : AppCompatActivity() {
     }
 
     private fun handleSaveRelationship(idTask: Int) {
-        listTagsName = ArrayList(tags.size)
-        listCheckedTags = BooleanArray(tags.size)
         for (i in 0 until listCheckedTags.size) {
             if (listCheckedTags[i]) {
                 val tag = repositoryHelper.findByTagName(listTagsName[i])

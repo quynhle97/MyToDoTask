@@ -26,17 +26,17 @@ interface TaskDAO {
     @Query("SELECT * FROM task WHERE priority=:priority")
     fun findByPriority(priority: Int): Task
 
-    @Query("SELECT * FROM task WHERE locationX=:locationX")
-    fun findByLocationX(locationX: Float): Task
+    @Query("SELECT * FROM task WHERE alarmtime=:alarmtime")
+    fun findByAlarmTime(alarmtime: String): Task
 
-    @Query("SELECT * FROM task WHERE locationY=:locationY")
-    fun findByLocationY(locationY: Float): Task
+    @Query("SELECT * FROM task WHERE remindertime=:remindertime")
+    fun findByReminderTime(remindertime: String): Task
 
     @Query("SELECT * FROM task WHERE categorize=:categorize")
     fun findByCategorize(categorize: String): Task
 
-    @Query("SELECT * FROM task WHERE reminder=:reminder")
-    fun findByReminder(reminder: String): Task
+    @Query("SELECT * FROM task WHERE repeat=:repeat")
+    fun findByRepeat(repeat: String): Task
 
     @Query("SELECT * FROM task WHERE attach=:attach")
     fun findByAttach(attach: String): Task

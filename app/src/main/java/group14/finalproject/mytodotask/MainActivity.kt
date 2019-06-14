@@ -193,7 +193,16 @@ class MainActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelected
             tasks = repositoryHelper.getTasksFirebaseDatabase(username)
             tags = repositoryHelper.getTagsFirebaseDatabase(username)
             relationships = repositoryHelper.getRelationshipsFirebaseDatabase(username)
-            Toast.makeText(applicationContext, "$tasks", Toast.LENGTH_LONG).show()
+
+            for (i in tasks) {
+                repositoryHelper.insertTask(i)
+            }
+            for (i in tags) {
+                repositoryHelper.insertTag(i)
+            }
+            for (i in relationships) {
+                repositoryHelper.insertRelationship(i)
+            }
         } else {
             tasks = repositoryHelper.getAllTasks() as ArrayList<Task>
             tags = repositoryHelper.getAllTags() as ArrayList<Tag>
