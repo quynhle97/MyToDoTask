@@ -459,7 +459,7 @@ class TaskActivity : AppCompatActivity() {
             var tmp = ""
             for (i in 0 until tags.size) {
                 if (listCheckedTags[i]) {
-                    tmp += listTagsName[i] + ", "
+                    tmp += "\uD83C\uDFF7 ${listTagsName[i]} "
                 }
             }
             tv_add_tags.text = tmp
@@ -501,7 +501,7 @@ class TaskActivity : AppCompatActivity() {
             var tmp = ""
             for (i in 0 until tags.size) {
                 if (listCheckedTags[i]) {
-                    tmp += listTagsName[i] + ", "
+                    tmp += "\uD83C\uDFF7 ${listTagsName[i]} "
                 }
             }
             tv_add_tags.text = tmp

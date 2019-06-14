@@ -26,7 +26,7 @@ class TaskAdapter(var items: ArrayList<Task>, val context: Context) : RecyclerVi
     override fun onBindViewHolder(taskViewHolder: TaskViewHolder, position: Int) {
         taskViewHolder.title.text = items[position].title
         taskViewHolder.description.text = items[position].description
-        taskViewHolder.date.text = items[position].date
+        taskViewHolder.date.text = items[position].remindertime
         taskViewHolder.checkBox.isChecked = items[position].checked
 //        taskViewHolder.imageAttach.visibility = View.VISIBLE
 //        taskViewHolder.imageReminder.visibility = View.VISIBLE

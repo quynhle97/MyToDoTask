@@ -104,8 +104,6 @@ class MainActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelected
     }
 
     override fun onBackPressed() {
-        signOut()
-
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START)
@@ -123,7 +121,7 @@ class MainActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelected
         return when (item.itemId) {
             R.id.action_search -> {
                 val intent = Intent(this@MainActivity, SearchActivity::class.java)
-                startActivity(intent)
+                startActivityForResult(intent, CODE_SEARCH_TASK)
                 return true
             }
             R.id.action_clear_completed->true
@@ -190,6 +188,13 @@ class MainActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelected
                     repositoryHelper.removeTaskFirebaseDatabase(tasks[codeDelTask], username)   // Firebase Database
                 removeTaskFromAdapter(codeDelTask)
             }
+        }
+        if (requestCode == CODE_SEARCH_TASK && resultCode == Activity.RESULT_OK) {
+            tasks = repositoryHelper.getAllTasks() as ArrayList<Task>
+            tags = repositoryHelper.getAllTags() as ArrayList<Tag>
+            relationships = repositoryHelper.getAllRelationships() as ArrayList<Relationship>
+            taskAdapter.setArrayListTask(tasks)
+            taskAdapter.notifyDataSetChanged()
         }
     }
 

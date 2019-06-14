@@ -59,9 +59,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" android:id="@+id/radio_btn_uncomplete" android:layout_weight="1"/>
         <RadioButton
-                android:text="None"
+                android:text="All"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" android:id="@+id/radio_btn_none" android:layout_weight="1"/>
+                android:layout_height="wrap_content" android:id="@+id/radio_btn_none" android:layout_weight="1"
+                android:checked="true"/>
     </RadioGroup>
     <android.support.v7.widget.RecyclerView
             android:layout_width="0dp"
