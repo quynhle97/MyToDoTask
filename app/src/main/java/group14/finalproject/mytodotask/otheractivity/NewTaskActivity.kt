@@ -167,10 +167,10 @@ class NewTaskActivity : AppCompatActivity() {
                 val tag = repositoryHelper.findByTagName(listTagsName[i])
                 if (tag.id != null) {
                     val rel = Relationship(null, tag.id!!, idTask)
-                    val id = repositoryHelper.insertRelationship(rel)                                               // Local Database
+                    val id = repositoryHelper.insertRelationship(rel)                             // Local Database
                     rel.id = id.toInt()
                     if (username != USERNAME_DEFAULT)
-                        repositoryHelper.writeRelationshipFirebaseDatabase(rel, username)   // Firebase Database
+                        repositoryHelper.writeRelationshipFirebaseDatabase(rel, username)               // Firebase Database
                     Toast.makeText(applicationContext, "Save Tag added: ${tag.id} - $idTask", Toast.LENGTH_SHORT)
                         .show()
                 }
