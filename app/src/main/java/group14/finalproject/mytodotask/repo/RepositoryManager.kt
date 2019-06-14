@@ -1,7 +1,6 @@
 package group14.finalproject.mytodotask.repo
 
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.*
 import group14.finalproject.mytodotask.*
 import group14.finalproject.mytodotask.room.*
 import javax.inject.Inject
@@ -15,6 +14,66 @@ class RepositoryManager @Inject constructor (taskDao: TaskDAO, tagDAO: TagDAO, r
 
     override fun getFirebaseReference(): DatabaseReference {
         return firebaseReference
+    }
+
+    override fun getTasksFirebaseDatabase(username: String): ArrayList<Task> {
+        val array = ArrayList<Task>()
+        firebaseReference.child(TASK_FIREBASE_DATABASE).child(username).addListenerForSingleValueEvent(object: ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {
+
+            }
+
+            override fun onDataChange(p0: DataSnapshot) {
+                val data = p0.children
+                data.forEach {
+                    val mem = it.getValue(Task::class.java)
+                    if (mem != null) {
+                        array.add(mem)
+                    }
+                }
+            }
+        })
+        return array
+    }
+
+    override fun getTagsFirebaseDatabase(username: String): ArrayList<Tag> {
+        val array = ArrayList<Tag>()
+        firebaseReference.child(TAG_FIREBASE_DATABASE).child(username).addListenerForSingleValueEvent(object: ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {
+
+            }
+
+            override fun onDataChange(p0: DataSnapshot) {
+                val data = p0.children
+                data.forEach {
+                    val mem = it.getValue(Tag::class.java)
+                    if (mem != null) {
+                        array.add(mem)
+                    }
+                }
+            }
+        })
+        return array
+    }
+
+    override fun getRelationshipsFirebaseDatabase(username: String): ArrayList<Relationship> {
+        val array = ArrayList<Relationship>()
+        firebaseReference.child(RELATIONSHIP_FIREBASE_DATABASE).child(username).addListenerForSingleValueEvent(object: ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {
+
+            }
+
+            override fun onDataChange(p0: DataSnapshot) {
+                val data = p0.children
+                data.forEach {
+                    val mem = it.getValue(Relationship::class.java)
+                    if (mem != null) {
+                        array.add(mem)
+                    }
+                }
+            }
+        })
+        return array
     }
 
     override fun removeAllTasksFirebaseDatabase(username: String) {

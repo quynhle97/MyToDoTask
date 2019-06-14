@@ -192,58 +192,11 @@ class MainActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelected
         tasks = ArrayList()
         tags = ArrayList()
         relationships = ArrayList()
-        // Load data from Firebase Database
-        repositoryHelper.getFirebaseReference().child(TASK_FIREBASE_DATABASE).child(username).addValueEventListener(object: ValueEventListener {
-            override fun onCancelled(p0: DatabaseError) {
-                Toast.makeText(applicationContext,"Load tasks from Firebase failed", Toast.LENGTH_SHORT).show()
-                tasks = repositoryHelper.getAllTasks() as ArrayList<Task>                                               // Local Database
-            }
 
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val value = dataSnapshot.children
-                value.forEach {
-                    val m = it.getValue(Task::class.java)
-                    if (m != null) {
-                        tasks.add(m)
-                        Toast.makeText(applicationContext,"$m", Toast.LENGTH_SHORT).show()
-                    }
-                }
-            }
-        })
-        repositoryHelper.getFirebaseReference().child(TAG_FIREBASE_DATABASE).child(username).addValueEventListener(object: ValueEventListener {
-            override fun onCancelled(p0: DatabaseError) {
-                Toast.makeText(applicationContext,"Load tags from Firebase failed", Toast.LENGTH_SHORT).show()
-                tags = repositoryHelper.getAllTags() as ArrayList<Tag>                                                  // Local Database
-            }
+//        tasks = repositoryHelper.getAllTasks() as ArrayList<Task>
+//        tags = repositoryHelper.getAllTags() as ArrayList<Tag>
+//        relationships = repositoryHelper.getAllRelationships() as ArrayList<Relationship>
 
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val value = dataSnapshot.children
-                value.forEach {
-                    val m = it.getValue(Tag::class.java)
-                    if (m != null) {
-                        tags.add(m)
-                        Toast.makeText(applicationContext,"$m", Toast.LENGTH_SHORT).show()
-                    }
-                }
-            }
-        })
-        repositoryHelper.getFirebaseReference().child(RELATIONSHIP_FIREBASE_DATABASE).child(username).addValueEventListener(object: ValueEventListener {
-            override fun onCancelled(p0: DatabaseError) {
-                Toast.makeText(applicationContext,"Load relationships from Firebase failed", Toast.LENGTH_SHORT).show()
-                relationships = repositoryHelper.getAllRelationships() as ArrayList<Relationship>                       // Local Database
-            }
-
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val value = dataSnapshot.children
-                value.forEach {
-                    val m = it.getValue(Relationship::class.java)
-                    if (m != null) {
-                        relationships.add(m)
-                        Toast.makeText(applicationContext,"$m", Toast.LENGTH_SHORT).show()
-                    }
-                }
-            }
-        })
         setupRecyclerView()
     }
 
@@ -257,9 +210,6 @@ class MainActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelected
     private fun signOut() {
         SharedPreferencesHelper.clearUser()
         repositoryHelper.deleteAll()                                        // Delete Local Database
-        repositoryHelper.removeAllTasksFirebaseDatabase(username)           // Delete Tasks Firebase Database
-        repositoryHelper.removeAllTagsFirebaseDatabase(username)            // Delete Tags Firebase Database
-        repositoryHelper.removeAllRelationshipsFirebaseDatabase(username)   // Delete Relationship Firebase Database
     }
 
     private fun removeTaskFromAdapter(position: Int) {
@@ -287,11 +237,11 @@ class MainActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelected
             val tagName = mDialogView.edt_tag_name.text.toString()
             val newTag = Tag()
             newTag.tag = tagName
-            val id = repositoryHelper.insertTag(newTag)                                      // Add Local Database
+            val id = repositoryHelper.insertTag(newTag)                                       // Add Local Database
             newTag.id = id.toInt()
             if (username != USERNAME_DEFAULT)
-                repositoryHelper.writeTagFirebaseDatabase(newTag, username)         // Add Firebase Database
-            tags.add(newTag)                                                        // Add dialog view
+                repositoryHelper.writeTagFirebaseDatabase(newTag, username)                         // Add Firebase Database
+            tags.add(newTag)                                                                        // Add dialog view
             Toast.makeText(applicationContext,"New tag added: $tagName", Toast.LENGTH_SHORT).show()
         }
         mAlertDialog.btnCancelDialog.setOnClickListener{
