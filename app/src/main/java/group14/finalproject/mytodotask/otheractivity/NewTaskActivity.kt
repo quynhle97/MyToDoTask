@@ -162,7 +162,7 @@ class NewTaskActivity : AppCompatActivity() {
     }
 
     private fun handleSaveRelationship(idTask: Int) {
-        for (i in 0 until tags.size) {
+        for (i in 0 until listCheckedTags.size) {
             if (listCheckedTags[i]) {
                 val tag = repositoryHelper.findByTagName(listTagsName[i])
                 if (tag.id != null) {
