@@ -194,6 +194,7 @@ class MainActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelected
     }
 
     private fun initial() {
+        // Fix bugs in this
         // Update fakeItem to datachange and get data from database
         val fakeTask = Task(1001, "", false, "", "", 0, "", "", "", "", "", "")
         repositoryHelper.writeTaskFirebaseDatabase(fakeTask, username)
@@ -207,20 +208,26 @@ class MainActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelected
 
         // Get database from Firebase or Roomdatabase
         if (username != USERNAME_DEFAULT) {
-            tasks = repositoryHelper.getTasksFirebaseDatabase(username)
-            tags = repositoryHelper.getTagsFirebaseDatabase(username)
-            relationships = repositoryHelper.getRelationshipsFirebaseDatabase(username)
-            for (i in tasks) {
-                repositoryHelper.insertTask(i)
-                Log.d("initial tasks", tasks.toString())
-            }
-            for (i in tags) {
-                repositoryHelper.insertTag(i)
-                Log.d("initial tags", tags.toString())
-            }
-            for (i in relationships) {
-                repositoryHelper.insertRelationship(i)
-                Log.d("initial relationships", relationships.toString())
+            tasks = repositoryHelper.getAllTasks() as ArrayList<Task>
+            tags = repositoryHelper.getAllTags() as ArrayList<Tag>
+            relationships = repositoryHelper.getAllRelationships() as ArrayList<Relationship>
+
+            if (tasks.size == 0 && tags.size == 0 && relationships.size == 0) {
+                tasks = repositoryHelper.getTasksFirebaseDatabase(username)
+                tags = repositoryHelper.getTagsFirebaseDatabase(username)
+                relationships = repositoryHelper.getRelationshipsFirebaseDatabase(username)
+                for (i in tasks) {
+                    repositoryHelper.insertTask(i)
+                    Log.d("initial tasks", tasks.toString())
+                }
+                for (i in tags) {
+                    repositoryHelper.insertTag(i)
+                    Log.d("initial tags", tags.toString())
+                }
+                for (i in relationships) {
+                    repositoryHelper.insertRelationship(i)
+                    Log.d("initial relationships", relationships.toString())
+                }
             }
         } else {
             tasks = repositoryHelper.getAllTasks() as ArrayList<Task>
