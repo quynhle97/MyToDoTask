@@ -1,6 +1,7 @@
 package group14.finalproject.mytodotask.otheractivity
 
 import android.app.Activity
+import android.app.DatePickerDialog
 import android.content.Intent
 import android.app.TimePickerDialog
 import android.icu.util.Calendar
@@ -11,6 +12,7 @@ import android.text.format.DateFormat
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.DatePicker
 import android.widget.RadioButton
 import android.widget.TimePicker
 import android.widget.Toast
@@ -19,6 +21,9 @@ import group14.finalproject.mytodotask.repo.RepositoryHelper
 import group14.finalproject.mytodotask.room.*
 import group14.finalproject.mytodotask.sharedpreferences.SharedPreferencesHelper
 import kotlinx.android.synthetic.main.activity_details_task.*
+import java.text.SimpleDateFormat
+import java.time.OffsetDateTime
+import java.util.*
 import kotlinx.android.synthetic.main.dialog_add_new_tag.*
 import kotlinx.android.synthetic.main.dialog_add_new_tag.view.*
 import javax.inject.Inject
@@ -32,6 +37,8 @@ class DetailsTaskActivity : AppCompatActivity() {
     var indexRadioButton: Int = 1
     var indexItemClicked: Int = -1
     var idItemClicked: Int = -1
+    var reminderTime: Date? = null
+    var alarmTime: Date? = null
 
     lateinit var editTask: Task
     lateinit var tags: ArrayList<Tag>
@@ -176,10 +183,28 @@ class DetailsTaskActivity : AppCompatActivity() {
             val c = Calendar.getInstance()
             val hour = c.get(Calendar.HOUR_OF_DAY)
             val minute = c.get(Calendar.MINUTE)
+            val year = c.get(Calendar.YEAR)
+            val month = c.get(Calendar.MONTH)
+            val day = c.get(Calendar.DAY_OF_MONTH)
 
             // Create a new instance of TimePickerDialog and return it
             val timePickerDialog =  TimePickerDialog(this, TimePickerDialog.OnTimeSetListener { timePicker: TimePicker, hourOfDay: Int, minute: Int ->
-                tv_add_reminder.setText("Hour: $hourOfDay, minute: $minute")
+                c.set(Calendar.HOUR_OF_DAY, hourOfDay)
+                c.set(Calendar.MINUTE, minute)
+                val datePickerDialog = DatePickerDialog(this, DatePickerDialog.OnDateSetListener { datePicker: DatePicker, year: Int, month: Int, day: Int ->
+                    tv_add_reminder.setText("Hour: $hourOfDay, minute: $minute")
+                    c.set(Calendar.YEAR, year)
+                    c.set(Calendar.MONTH, month)
+                    c.set(Calendar.DAY_OF_MONTH, day)
+                    reminderTime = c.time
+                    if (alarmTime == null) {
+                        alarmTime = reminderTime
+                    }
+                    val simpleDateTime = SimpleDateFormat("hh:mm dd/mm/yy")
+                    tv_add_reminder.text = simpleDateTime.format(reminderTime)
+                }, year, month, day)
+                datePickerDialog.setTitle("Select date")
+                datePickerDialog.show()
             }, hour, minute, DateFormat.is24HourFormat(this))
             timePickerDialog.setTitle("Select Time")
             timePickerDialog.show()
