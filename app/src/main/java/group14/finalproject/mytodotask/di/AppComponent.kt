@@ -3,8 +3,6 @@ package group14.finalproject.mytodotask.di
 import com.google.firebase.database.*
 import dagger.Component
 import group14.finalproject.mytodotask.MainActivity
-import group14.finalproject.mytodotask.otheractivity.DetailsTaskActivity
-import group14.finalproject.mytodotask.otheractivity.NewTaskActivity
 import group14.finalproject.mytodotask.otheractivity.SearchActivity
 import group14.finalproject.mytodotask.otheractivity.TaskActivity
 import group14.finalproject.mytodotask.repo.RepositoryManager
@@ -27,8 +25,6 @@ interface AppComponent {
     fun repositoryManager(): RepositoryManager
 
     fun inject (mainActivity: MainActivity)
-    fun inject (mNewTaskActivity: NewTaskActivity)
-    fun inject (mDetailsTaskActivity: DetailsTaskActivity)
     fun inject (mSearchActivity: SearchActivity)
     fun inject (mTaskActivity: TaskActivity)
 }
