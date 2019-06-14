@@ -22,7 +22,6 @@ import group14.finalproject.mytodotask.room.*
 import group14.finalproject.mytodotask.sharedpreferences.SharedPreferencesHelper
 import kotlinx.android.synthetic.main.activity_details_task.*
 import java.text.SimpleDateFormat
-import java.time.OffsetDateTime
 import java.util.*
 import kotlinx.android.synthetic.main.dialog_add_new_tag.*
 import kotlinx.android.synthetic.main.dialog_add_new_tag.view.*
@@ -63,7 +62,7 @@ class DetailsTaskActivity : AppCompatActivity() {
         tv_add_tags.setOnClickListener {
             relationships = ArrayList()
             tags = ArrayList()
-            getInitalDatabaseTagsAndRelationships()
+            getInitialDatabaseTagsAndRelationships()
 
             listTagsName = ArrayList(tags.size)
             listCheckedTags = BooleanArray(tags.size)
@@ -209,7 +208,6 @@ class DetailsTaskActivity : AppCompatActivity() {
             timePickerDialog.setTitle("Select Time")
             timePickerDialog.show()
         }
-
     }
 
     private fun handleSaveTask() {
@@ -247,7 +245,7 @@ class DetailsTaskActivity : AppCompatActivity() {
         myDialog.show()
     }
 
-    private fun getInitalDatabaseTagsAndRelationships() {
+    private fun getInitialDatabaseTagsAndRelationships() {
         tags = repositoryHelper.getAllTags() as ArrayList<Tag>
         relationships = repositoryHelper.getAllRelationships() as ArrayList<Relationship>
     }

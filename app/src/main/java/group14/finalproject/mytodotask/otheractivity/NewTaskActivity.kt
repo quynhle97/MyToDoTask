@@ -43,7 +43,7 @@ class NewTaskActivity : AppCompatActivity() {
 
         (application as MyApplication).getAppComponent().inject(this)
 
-        getInitalDatabaseTagsAndRelationships()
+        getInitialDatabaseTagsAndRelationships()
         username = SharedPreferencesHelper.readString(USERNAME_KEY)
 
         listCheckedTags = BooleanArray(tags.size)
@@ -77,8 +77,7 @@ class NewTaskActivity : AppCompatActivity() {
 
         return when (item.itemId) {
             R.id.action_save-> {
-                if (listTagsName != null && listCheckedTags != null)
-                    handleSaveNewTask()
+                handleSaveNewTask()
                 return true
             }
             else -> super.onOptionsItemSelected(item)
@@ -98,15 +97,14 @@ class NewTaskActivity : AppCompatActivity() {
         newTask.id = id.toInt()
         repositoryHelper.writeTaskFirebaseDatabase(newTask, username) // Firebase Database
 
-        if (listCheckedTags != null && listTagsName != null)
-            handleSaveRelationship(newTask.id!!)
+        handleSaveRelationship(newTask.id!!)
 
         intent.putExtra(NEW_TASK_KEY, newTask)
         setResult(Activity.RESULT_OK, intent)
         finish()
     }
 
-    private fun getInitalDatabaseTagsAndRelationships() {
+    private fun getInitialDatabaseTagsAndRelationships() {
         tags = repositoryHelper.getAllTags() as ArrayList<Tag>
         relationships = repositoryHelper.getAllRelationships() as ArrayList<Relationship>
     }
