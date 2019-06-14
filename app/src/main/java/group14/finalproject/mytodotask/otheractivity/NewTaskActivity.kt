@@ -43,8 +43,11 @@ class NewTaskActivity : AppCompatActivity() {
 
         (application as MyApplication).getAppComponent().inject(this)
 
-        getInitalDatabaseTagsAndRelationships()
+        getInitialDatabaseTagsAndRelationships()
         username = SharedPreferencesHelper.readString(USERNAME_KEY)
+
+        listCheckedTags = BooleanArray(tags.size)
+        listTagsName = ArrayList(tags.size)
 
         tv_add_tags.setOnClickListener {
             listCheckedTags = BooleanArray(tags.size)
@@ -93,6 +96,7 @@ class NewTaskActivity : AppCompatActivity() {
         val id = repositoryHelper.insertTask(newTask)           // Local Database
         newTask.id = id.toInt()
         repositoryHelper.writeTaskFirebaseDatabase(newTask, username) // Firebase Database
+
         handleSaveRelationship(newTask.id!!)
 
         intent.putExtra(NEW_TASK_KEY, newTask)
@@ -100,7 +104,7 @@ class NewTaskActivity : AppCompatActivity() {
         finish()
     }
 
-    private fun getInitalDatabaseTagsAndRelationships() {
+    private fun getInitialDatabaseTagsAndRelationships() {
         tags = repositoryHelper.getAllTags() as ArrayList<Tag>
         relationships = repositoryHelper.getAllRelationships() as ArrayList<Relationship>
     }
@@ -162,15 +166,15 @@ class NewTaskActivity : AppCompatActivity() {
     }
 
     private fun handleSaveRelationship(idTask: Int) {
-        for (i in 0 until tags.size) {
+        for (i in 0 until listCheckedTags.size) {
             if (listCheckedTags[i]) {
                 val tag = repositoryHelper.findByTagName(listTagsName[i])
                 if (tag.id != null) {
                     val rel = Relationship(null, tag.id!!, idTask)
-                    val id = repositoryHelper.insertRelationship(rel)                                               // Local Database
+                    val id = repositoryHelper.insertRelationship(rel)                             // Local Database
                     rel.id = id.toInt()
                     if (username != USERNAME_DEFAULT)
-                        repositoryHelper.writeRelationshipFirebaseDatabase(rel, username)   // Firebase Database
+                        repositoryHelper.writeRelationshipFirebaseDatabase(rel, username)               // Firebase Database
                     Toast.makeText(applicationContext, "Save Tag added: ${tag.id} - $idTask", Toast.LENGTH_SHORT)
                         .show()
                 }

@@ -13,10 +13,15 @@ import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.Toolbar
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.WindowManager
 import android.widget.Toast
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import group14.finalproject.mytodotask.otheractivity.*
 import group14.finalproject.mytodotask.recyclerview.TaskAdapter
 import group14.finalproject.mytodotask.recyclerview.TaskItemClickListener
@@ -63,7 +68,9 @@ class MainActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelected
 
         val fab: FloatingActionButton = findViewById(R.id.fab)
         fab.setOnClickListener { view ->
-            val intent = Intent(this@MainActivity, NewTaskActivity::class.java)
+//            val intent = Intent(this@MainActivity, NewTaskActivity::class.java)
+            val intent = Intent(this@MainActivity, TaskActivity::class.java)
+            intent.putExtra(INDEX_NEW_DETAIL, 0)
             startActivityForResult(intent, CODE_ADD_NEW_TASK)
         }
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
@@ -79,7 +86,9 @@ class MainActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelected
 
     private val taskItemClickListener = object : TaskItemClickListener {
         override fun onItemClicked(position: Int) {
-            val intent = Intent(this@MainActivity, DetailsTaskActivity::class.java)
+//            val intent = Intent(this@MainActivity, DetailsTaskActivity::class.java)
+            val intent = Intent(this@MainActivity, TaskActivity::class.java)
+            intent.putExtra(INDEX_NEW_DETAIL, 1)
             intent.putExtra(EDIT_TASK, tasks[position])
             intent.putExtra(EDIT_TASK_POSITION, position)
             startActivityForResult(intent, CODE_EDIT_TASK)
@@ -125,7 +134,7 @@ class MainActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelected
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.nav_my_tasks -> {
-
+                initial()
             }
             R.id.nav_new_tag -> {
                 showDialogCreateNewTag()
@@ -185,9 +194,46 @@ class MainActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelected
     }
 
     private fun initial() {
-        tasks = repositoryHelper.getAllTasks() as ArrayList<Task>
-        tags = repositoryHelper.getAllTags() as ArrayList<Tag>
-        relationships = repositoryHelper.getAllRelationships() as ArrayList<Relationship>
+        // Fix bugs in this
+        // Update fakeItem to datachange and get data from database
+        val fakeTask = Task(1001, "", false, "", "", 0, "", "", "", "", "", "")
+        repositoryHelper.writeTaskFirebaseDatabase(fakeTask, username)
+        repositoryHelper.removeTaskFirebaseDatabase(fakeTask, username)
+        val fakeTag = Tag(1001, "")
+        repositoryHelper.writeTagFirebaseDatabase(fakeTag, username)
+        repositoryHelper.removeTagFirebaseDatabase(fakeTag, username)
+        val fakeRel = Relationship(1001, 1001, 1001)
+        repositoryHelper.writeRelationshipFirebaseDatabase(fakeRel, username)
+        repositoryHelper.removeRelationshipFirebaseDatabase(fakeRel, username)
+
+        // Get database from Firebase or Roomdatabase
+        if (username != USERNAME_DEFAULT) {
+            tasks = repositoryHelper.getAllTasks() as ArrayList<Task>
+            tags = repositoryHelper.getAllTags() as ArrayList<Tag>
+            relationships = repositoryHelper.getAllRelationships() as ArrayList<Relationship>
+
+            if (tasks.size == 0 && tags.size == 0 && relationships.size == 0) {
+                tasks = repositoryHelper.getTasksFirebaseDatabase(username)
+                tags = repositoryHelper.getTagsFirebaseDatabase(username)
+                relationships = repositoryHelper.getRelationshipsFirebaseDatabase(username)
+                for (i in tasks) {
+                    repositoryHelper.insertTask(i)
+                    Log.d("initial tasks", tasks.toString())
+                }
+                for (i in tags) {
+                    repositoryHelper.insertTag(i)
+                    Log.d("initial tags", tags.toString())
+                }
+                for (i in relationships) {
+                    repositoryHelper.insertRelationship(i)
+                    Log.d("initial relationships", relationships.toString())
+                }
+            }
+        } else {
+            tasks = repositoryHelper.getAllTasks() as ArrayList<Task>
+            tags = repositoryHelper.getAllTags() as ArrayList<Tag>
+            relationships = repositoryHelper.getAllRelationships() as ArrayList<Relationship>
+        }
         setupRecyclerView()
     }
 
@@ -200,9 +246,7 @@ class MainActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelected
 
     private fun signOut() {
         SharedPreferencesHelper.clearUser()
-        repositoryHelper.deleteAll()                                    // Delete Local Database
-        repositoryHelper.removeAllTasksFirebaseDatabase(username)       // Delete Tasks Firebase Database
-        repositoryHelper.removeAllTagsFirebaseDatabase(username)        // Delete Tags Firebase Database
+        repositoryHelper.deleteAll()                                        // Delete Local Database
     }
 
     private fun removeTaskFromAdapter(position: Int) {
@@ -230,11 +274,11 @@ class MainActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelected
             val tagName = mDialogView.edt_tag_name.text.toString()
             val newTag = Tag()
             newTag.tag = tagName
-            val id = repositoryHelper.insertTag(newTag)                                      // Add Local Database
+            val id = repositoryHelper.insertTag(newTag)                                       // Add Local Database
             newTag.id = id.toInt()
             if (username != USERNAME_DEFAULT)
-                repositoryHelper.writeTagFirebaseDatabase(newTag, username)         // Add Firebase Database
-            tags.add(newTag)                                                        // Add dialog view
+                repositoryHelper.writeTagFirebaseDatabase(newTag, username)                         // Add Firebase Database
+            tags.add(newTag)                                                                        // Add dialog view
             Toast.makeText(applicationContext,"New tag added: $tagName", Toast.LENGTH_SHORT).show()
         }
         mAlertDialog.btnCancelDialog.setOnClickListener{
@@ -245,8 +289,10 @@ class MainActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelected
     private fun showDialogListOfTags() {
         this.tags = ArrayList()
         tags = repositoryHelper.getAllTags() as ArrayList<Tag>
+        Log.d("show dialog tags", tags.toString())
         this.relationships = ArrayList()
         relationships = repositoryHelper.getAllRelationships() as ArrayList<Relationship>
+        Log.d("show dialog tags", relationships.toString())
 
         // Save flag as tag can't be deleted: True - Can't be deleted and False - Can be deleted
         var arrTaged = ArrayList<Boolean>(tags.size)
