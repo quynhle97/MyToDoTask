@@ -299,14 +299,20 @@ class TaskActivity : AppCompatActivity() {
             R.id.action_save-> {
                 if (indexNewOrDetail == 0) {
                     handleSaveNewTask()
+                    // Notification
                     mNotificationTime = this.reminderTime?.time!!
                     NotificationUtils().setNotification(mNotificationTime, this)
+                    // Alarm
                     setTImer(alarmTime?.time!!, this@TaskActivity)
+                    NotificationUtils().setNotification(alarmTime?.time!!, this)
                 } else if (indexNewOrDetail == 1) {
                     handleSaveEditTask()
+                    // Notification
                     mNotificationTime = this.reminderTime?.time!!
                     NotificationUtils().setNotification(mNotificationTime, this)
+                    // Alarm
                     setTImer(alarmTime?.time!!, this@TaskActivity)
+                    NotificationUtils().setNotification(alarmTime?.time!!, this)
                 }
                 return true
             }
