@@ -1,9 +1,12 @@
 package group14.finalproject.mytodotask.repo
 
+import com.google.firebase.database.FirebaseDatabase
 import group14.finalproject.mytodotask.room.*
 
 interface RepositoryHelper {
     // Firebase Database Reference
+    fun getFirebaseDatabase(): FirebaseDatabase
+
     fun writeTaskFirebaseDatabase(task: Task, username: String)
     fun removeTaskFirebaseDatabase(task: Task, username: String)
     fun removeAllTasksFirebaseDatabase(username: String)

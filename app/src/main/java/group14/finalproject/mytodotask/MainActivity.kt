@@ -185,9 +185,13 @@ class MainActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelected
     }
 
     private fun initial() {
+        // Local Database
         tasks = repositoryHelper.getAllTasks() as ArrayList<Task>
         tags = repositoryHelper.getAllTags() as ArrayList<Tag>
         relationships = repositoryHelper.getAllRelationships() as ArrayList<Relationship>
+        // Firebase Database
+
+        // Set Database for Local from Firebase Database
         setupRecyclerView()
     }
 

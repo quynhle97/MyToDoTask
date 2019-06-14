@@ -1,6 +1,5 @@
 package group14.finalproject.mytodotask.repo
 
-import android.util.Log
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import group14.finalproject.mytodotask.*
@@ -12,7 +11,12 @@ class RepositoryManager @Inject constructor (taskDao: TaskDAO, tagDAO: TagDAO, r
     private val taskDao: TaskDAO = taskDao
     private val tagDao: TagDAO = tagDAO
     private val relationshipDao: RelationshipDAO = relationshipDAO
+    private val firebaseDatabase: FirebaseDatabase = firebaseDatabase
     private val firebaseReference: DatabaseReference = firebaseDatabase.reference
+
+    override fun getFirebaseDatabase(): FirebaseDatabase {
+        return firebaseDatabase
+    }
 
     override fun removeAllTasksFirebaseDatabase(username: String) {
         firebaseReference.child(TASK_FIREBASE_DATABASE).child(username).removeValue()
