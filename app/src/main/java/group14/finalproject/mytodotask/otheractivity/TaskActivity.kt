@@ -1,9 +1,8 @@
 package group14.finalproject.mytodotask.otheractivity
 
 import android.annotation.SuppressLint
-import android.app.Activity
-import android.app.DatePickerDialog
-import android.app.TimePickerDialog
+import android.app.*
+import android.content.Context
 import android.content.Intent
 import android.icu.util.Calendar
 import android.support.v7.app.AppCompatActivity
@@ -26,6 +25,7 @@ import com.appeaser.sublimepickerlibrary.helpers.SublimeOptions
 import com.appeaser.sublimepickerlibrary.recurrencepicker.SublimeRecurrencePicker
 import com.google.ical.compat.javautil.DateIteratorFactory
 import group14.finalproject.mytodotask.*
+import group14.finalproject.mytodotask.alarm.AlarmReceiver
 import group14.finalproject.mytodotask.fragments.SublimePickerFragment
 import group14.finalproject.mytodotask.notification.NotificationUtils
 //import group14.finalproject.mytodotask.notification.NotificationUtils
@@ -301,10 +301,12 @@ class TaskActivity : AppCompatActivity() {
                     handleSaveNewTask()
                     mNotificationTime = this.reminderTime?.time!!
                     NotificationUtils().setNotification(mNotificationTime, this)
+                    setTImer(alarmTime?.time!!, this@TaskActivity)
                 } else if (indexNewOrDetail == 1) {
                     handleSaveEditTask()
                     mNotificationTime = this.reminderTime?.time!!
                     NotificationUtils().setNotification(mNotificationTime, this)
+                    setTImer(alarmTime?.time!!, this@TaskActivity)
                 }
                 return true
             }
@@ -569,5 +571,18 @@ class TaskActivity : AppCompatActivity() {
 
         val myDialog = builder.create()
         myDialog.show()
+    }
+
+    private fun setTImer(timeInMilliSeconds: Long, activity: Activity) {
+        if (timeInMilliSeconds > 0) {
+            val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+            val calendar = java.util.Calendar.getInstance()
+            calendar.timeInMillis = timeInMilliSeconds
+
+            val intent = Intent(this, AlarmReceiver::class.java)
+            val pendingIntent = PendingIntent.getBroadcast(activity, 0, intent, 0)
+            alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
+        }
     }
 }

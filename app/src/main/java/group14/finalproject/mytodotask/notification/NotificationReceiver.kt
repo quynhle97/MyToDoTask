@@ -5,7 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 
-class AlarmReceiver: BroadcastReceiver() {
+class NotificationReceiver: BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
 
         val service = Intent(context, NotificationService::class.java)
