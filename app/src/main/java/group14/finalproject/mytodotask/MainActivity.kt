@@ -189,13 +189,15 @@ class MainActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelected
     }
 
     private fun initial() {
-        tasks = ArrayList()
-        tags = ArrayList()
-        relationships = ArrayList()
-
-//        tasks = repositoryHelper.getAllTasks() as ArrayList<Task>
-//        tags = repositoryHelper.getAllTags() as ArrayList<Tag>
-//        relationships = repositoryHelper.getAllRelationships() as ArrayList<Relationship>
+        if (username != USERNAME_DEFAULT) {
+            tasks = repositoryHelper.getTasksFirebaseDatabase(username)
+            tags = repositoryHelper.getTagsFirebaseDatabase(username)
+            relationships = repositoryHelper.getRelationshipsFirebaseDatabase(username)
+        } else {
+            tasks = repositoryHelper.getAllTasks() as ArrayList<Task>
+            tags = repositoryHelper.getAllTags() as ArrayList<Tag>
+            relationships = repositoryHelper.getAllRelationships() as ArrayList<Relationship>
+        }
 
         setupRecyclerView()
     }
