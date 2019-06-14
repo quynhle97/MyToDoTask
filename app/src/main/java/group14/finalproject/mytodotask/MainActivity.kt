@@ -230,7 +230,8 @@ class MainActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelected
             val tagName = mDialogView.edt_tag_name.text.toString()
             val newTag = Tag()
             newTag.tag = tagName
-            repositoryHelper.insertTag(newTag)                                      // Add Local Database
+            val id = repositoryHelper.insertTag(newTag)                                      // Add Local Database
+            newTag.id = id.toInt()
             if (username != USERNAME_DEFAULT)
                 repositoryHelper.writeTagFirebaseDatabase(newTag, username)         // Add Firebase Database
             tags.add(newTag)                                                        // Add dialog view

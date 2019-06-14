@@ -237,7 +237,8 @@ class DetailsTaskActivity : AppCompatActivity() {
                 val tag = repositoryHelper.findByTagName(listTagsName[i])
                 if (tag.id != null) {
                     val rel = Relationship(null, tag.id!!, editTask.id!!)
-                    repositoryHelper.insertRelationship(rel)                                // Local Database
+                    val id = repositoryHelper.insertRelationship(rel)                                // Local Database
+                    rel.id = id.toInt()
                     if (username != USERNAME_DEFAULT)
                         repositoryHelper.writeRelationshipFirebaseDatabase(rel, username)   // Firebase Database
                     Toast.makeText(applicationContext, "Save Tag-Task Relationship added: ${getTagName(tag.id!!)} - ${editTask.title}", Toast.LENGTH_SHORT)

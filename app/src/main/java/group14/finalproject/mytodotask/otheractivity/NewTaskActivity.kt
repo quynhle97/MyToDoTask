@@ -118,7 +118,8 @@ class NewTaskActivity : AppCompatActivity() {
             val tagName = mDialogView.edt_tag_name.text.toString()
             val newTag = Tag()
             newTag.tag = tagName
-            repositoryHelper.insertTag(newTag)                                      // Add Local Database
+            val id = repositoryHelper.insertTag(newTag)                                      // Add Local Database
+            newTag.id = id.toInt()
             if (username != USERNAME_DEFAULT)
                 repositoryHelper.writeTagFirebaseDatabase(newTag, username)         // Add Firebase Database
             tags.add(newTag)                                                        // Add dialog view
@@ -166,7 +167,8 @@ class NewTaskActivity : AppCompatActivity() {
                 val tag = repositoryHelper.findByTagName(listTagsName[i])
                 if (tag.id != null) {
                     val rel = Relationship(null, tag.id!!, idTask)
-                    repositoryHelper.insertRelationship(rel)                                // Local Database
+                    val id = repositoryHelper.insertRelationship(rel)                                               // Local Database
+                    rel.id = id.toInt()
                     if (username != USERNAME_DEFAULT)
                         repositoryHelper.writeRelationshipFirebaseDatabase(rel, username)   // Firebase Database
                     Toast.makeText(applicationContext, "Save Tag added: ${tag.id} - $idTask", Toast.LENGTH_SHORT)
