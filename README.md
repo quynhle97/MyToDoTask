@@ -15,17 +15,17 @@ MyToDoTask is a to-do task application written by Kotlin language.
 >Application will be improved in the future.
 
 ## Screenshots
-<img src="/screenshots/login/register.png" height="400px"/><img src="/screenshots/login/register.png" height="400px"/>
-<img src="/screenshots/login/re-register.png" height="400px"/><img src="/screenshots/login/re-register.png" height="400px"/>
-<img src="/screenshots/login/login.png" height="400px"/><img src="/screenshots/login/login.png" height="400px"/>
-<img src="/screenshots/main/list_tasks.png" height="400px"/> <img src="/screenshots/main/list_tasks.png" height="400px"/>
-<img src="/screenshots/main/list_tags.png" height="400px"/><img src="/screenshots/main/list_tags.png" height="400px"/>
-<img src="/screenshots/main/create_new_tag.png" height="400px"/><img src="/screenshots/main/create_new_tag.png" height="400px"/>
-<img src="/screenshots/main/details_task_tags.png" height="400px"/><img src="/screenshots/main/details_task_tags.png" height="400px"/>
-<img src="/screenshots/main/details_task.png" height="400px"/><img src="/screenshots/main/details_task.png" height="400px"/>
-<img src="/screenshots/main/details_task_tags_2.png" height="400px"/><img src="/screenshots/main/details_task_tags_2.png" height="400px"/>
-<img src="/screenshots/notify/notification.png" height="400px"/><img src="/screenshots/notify/notification.png" height="400px"/>
-<img src="/screenshots/notify/notification_2.png" height="400px"/><img src="/screenshots/notify/notification_2.png" height="400px"/>
-<img src="/screenshots/search/search_completed.png" height="400px"/><img src="/screenshots/search/search_completed.png" height="400px"/>
-<img src="/screenshots/search/search_tag.png" height="400px"/><img src="/screenshots/search/search_tag.png" height="400px"/>
-<img src="/screenshots/search/search_title.png" height="400px"/><img src="/screenshots/search/search_title.png" height="400px"/>
+<img src="/screenshots/login/register.png" height="400px"/>
+<img src="/screenshots/login/re-register.png" height="400px"/>
+<img src="/screenshots/login/login.png" height="400px"/>
+<img src="/screenshots/main/list_tasks.png" height="400px"/>
+<img src="/screenshots/main/list_tags.png" height="400px"/>
+<img src="/screenshots/main/create_new_tag.png" height="400px"/>
+<img src="/screenshots/main/details_task_tags.png" height="400px"/>
+<img src="/screenshots/main/details_task.png" height="400px"/>
+<img src="/screenshots/main/details_task_tags_2.png" height="400px"/>
+<img src="/screenshots/notify/notification.png" height="400px"/>
+<img src="/screenshots/notify/notification_2.png" height="400px"/>
+<img src="/screenshots/search/search_completed.png" height="400px"/>
+<img src="/screenshots/search/search_tag.png" height="400px"/>
+<img src="/screenshots/search/search_title.png" height="400px"/>
