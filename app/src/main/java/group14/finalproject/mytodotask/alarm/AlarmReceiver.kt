@@ -5,21 +5,24 @@ import android.app.NotificationManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.media.Ringtone
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Vibrator
 import android.provider.Settings
+import com.bumptech.glide.load.engine.Resource
 import group14.finalproject.mytodotask.R
 
 class AlarmReceiver: BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         val vibrate = context?.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-        vibrate.vibrate(6000)
+        vibrate.vibrate(4000)
         val notify = Notification.Builder(context)
             .setContentTitle("Alarm MyToDoTask")
             .setContentText("You need check App")
-            .setSmallIcon(R.drawable.ic_launcher) as Notification
+            .setSmallIcon(R.mipmap.ic_launcher) as Notification
+
         val notificationManager = context?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notify.flags = Notification.FLAG_AUTO_CANCEL
         notificationManager.notify(0, notify)

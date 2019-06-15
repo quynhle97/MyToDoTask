@@ -125,6 +125,10 @@ class MainActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelected
                 return true
             }
             R.id.action_clear_completed->true
+            R.id.action_refresh-> {
+                initial()
+                return true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }
@@ -199,18 +203,6 @@ class MainActivity: AppCompatActivity(), NavigationView.OnNavigationItemSelected
     }
 
     private fun initial() {
-        // Fix bugs in this
-        // Update fakeItem to datachange and get data from database
-        val fakeTask = Task(1001, "", false, "", "", 0, "", "", "", "", "", "")
-        repositoryHelper.writeTaskFirebaseDatabase(fakeTask, username)
-        repositoryHelper.removeTaskFirebaseDatabase(fakeTask, username)
-        val fakeTag = Tag(1001, "")
-        repositoryHelper.writeTagFirebaseDatabase(fakeTag, username)
-        repositoryHelper.removeTagFirebaseDatabase(fakeTag, username)
-        val fakeRel = Relationship(1001, 1001, 1001)
-        repositoryHelper.writeRelationshipFirebaseDatabase(fakeRel, username)
-        repositoryHelper.removeRelationshipFirebaseDatabase(fakeRel, username)
-
         // Get database from Firebase or Roomdatabase
         if (username != USERNAME_DEFAULT) {
             tasks = repositoryHelper.getAllTasks() as ArrayList<Task>

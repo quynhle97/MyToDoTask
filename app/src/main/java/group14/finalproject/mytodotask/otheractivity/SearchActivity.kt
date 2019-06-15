@@ -73,7 +73,7 @@ class SearchActivity : AppCompatActivity() {
 
             for (i in 0 until tasks.size) {
                 matched = true
-                if (!tasks[i].title.contains(titleSearch)) {
+                if (!tasks[i].title.contains(titleSearch, ignoreCase = true)) {
                     matched = false
                 }
                 if (matched) {

@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools" package="group14.finalproject.mytodotask">
-    <uses-permission android:name="android.permission.WRITE_SETTINGS" tools:ignore="ProtectedPermissions"></uses-permission>
+
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.VIBRATE"/>
+
     <application
             android:name=".MyApplication"
             android:allowBackup="true"
@@ -35,6 +37,10 @@
         <receiver
                 android:name=".notification.NotificationReceiver"
                 android:enabled="true"/>
+        <receiver
+                android:name=".alarm.RepeatAlarmReceiver"
+                android:enabled="true"/>
+
         <receiver android:name=".alarm.AlarmReceiver"/>
         <service
                 android:name=".notification.NotificationService"

@@ -26,6 +26,7 @@ import com.appeaser.sublimepickerlibrary.recurrencepicker.SublimeRecurrencePicke
 import com.google.ical.compat.javautil.DateIteratorFactory
 import group14.finalproject.mytodotask.*
 import group14.finalproject.mytodotask.alarm.AlarmReceiver
+import group14.finalproject.mytodotask.alarm.RepeatAlarmReceiver
 import group14.finalproject.mytodotask.fragments.SublimePickerFragment
 import group14.finalproject.mytodotask.notification.NotificationUtils
 //import group14.finalproject.mytodotask.notification.NotificationUtils
@@ -299,20 +300,10 @@ class TaskActivity : AppCompatActivity() {
             R.id.action_save-> {
                 if (indexNewOrDetail == 0) {
                     handleSaveNewTask()
-                    // Notification
-                    mNotificationTime = this.reminderTime?.time!!
-                    NotificationUtils().setNotification(mNotificationTime, this)
-                    // Alarm
-                    setTImer(alarmTime?.time!!, this@TaskActivity)
-                    NotificationUtils().setNotification(alarmTime?.time!!, this)
+                    setAlarmFeatures()
                 } else if (indexNewOrDetail == 1) {
                     handleSaveEditTask()
-                    // Notification
-                    mNotificationTime = this.reminderTime?.time!!
-                    NotificationUtils().setNotification(mNotificationTime, this)
-                    // Alarm
-                    setTImer(alarmTime?.time!!, this@TaskActivity)
-                    NotificationUtils().setNotification(alarmTime?.time!!, this)
+                    setAlarmFeatures()
                 }
                 return true
             }
@@ -579,9 +570,9 @@ class TaskActivity : AppCompatActivity() {
         myDialog.show()
     }
 
-    private fun setTImer(timeInMilliSeconds: Long, activity: Activity) {
+    private fun setTimer(timeInMilliSeconds: Long, activity: Activity) {
         if (timeInMilliSeconds > 0) {
-            val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            val alarmManager:AlarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
             val calendar = java.util.Calendar.getInstance()
             calendar.timeInMillis = timeInMilliSeconds
@@ -589,6 +580,36 @@ class TaskActivity : AppCompatActivity() {
             val intent = Intent(this, AlarmReceiver::class.java)
             val pendingIntent = PendingIntent.getBroadcast(activity, 0, intent, 0)
             alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
+        }
+    }
+
+    private fun setRepeater(milis: Long) {
+        val alarmManager: AlarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val intent = Intent (this, RepeatAlarmReceiver::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0)
+        alarmManager.setRepeating(AlarmManager.RTC, milis, AlarmManager.INTERVAL_DAY, pendingIntent)
+    }
+
+    private fun setAlarmFeatures() {
+        // Notification
+        mNotificationTime = this.reminderTime?.time!!
+        NotificationUtils().setNotification(mNotificationTime, this)
+        // Alarm
+        if (alarmTime != null)
+            setTimer(alarmTime?.time!!, this@TaskActivity)
+        NotificationUtils().setNotification(alarmTime?.time!!, this)
+        var millis: Long = 0
+        when (repeat) {
+            "Daily" -> millis = 86400000
+            "Weekly" -> millis = 604800000
+            "Monthly" -> millis = 2592000000
+            "Yearly" -> millis = 31536000000
+            "Custom" -> millis = reminderTime!!.time
+        }
+        // Repeat
+        if (repeat != "") {
+            setRepeater(millis)
+            NotificationUtils().setNotification(millis, this)
         }
     }
 }
